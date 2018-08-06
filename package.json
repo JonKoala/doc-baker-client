@@ -8,12 +8,12 @@
   "scripts": {
     "build": "cross-env NODE_ENV=prod webpack --progress --hide-modules --config webpack.prod.js",
     "dev": "cross-env NODE_ENV=dev webpack-dev-server --hot --config webpack.dev.js",
-    "server": "cross-env NODE_ENV=prod http-server ./dist",
     "start": "cross-env NODE_ENV=prod node ./server.js"
   },
   "dependencies": {
     "config": "^2.0.1",
     "js-yaml": "^3.12.0",
+    "serve-handler": "^3.6.1",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
     "vuetify": "^1.1.9"
@@ -28,7 +28,6 @@
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "html-webpack-plugin": "^3.2.0",
-    "http-server": "^0.11.1",
     "vue-loader": "^15.2.6",
     "vue-template-compiler": "^2.5.17",
     "webpack": "^4.16.4",

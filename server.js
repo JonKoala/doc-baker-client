@@ -1,5 +1,12 @@
-const { spawn } = require('child_process')
 const config = require('config')
+const handler = require('serve-handler')
+const http = require('http')
 
-var port = config.get('server.port')
-const child = spawn('cmd', ['/c', `npm run server -- -g -p ${port}`], { stdio: 'inherit' })
+const server = http.createServer((req, res) => {
+  return handler(req, res, {
+    public: 'dist',
+    rewrites: [ { source: '*/*', destination: '/index.html' } ]
+  })
+})
+
+server.listen(config.get('server.port'))
