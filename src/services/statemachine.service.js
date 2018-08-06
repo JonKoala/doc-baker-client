@@ -1,9 +1,5 @@
-import { Machine } from 'xstate'
-
 import schema from './statemachine/schema'
 
-
-const machine = Machine(schema)
 
 function getState (state) {
   return schema.states[state]
@@ -23,7 +19,7 @@ function getStateType (state) {
 }
 
 function transition (state, next) {
-  return machine.transition(state, next).value
+  return getState(state).on[next]
 }
 
 export default {
