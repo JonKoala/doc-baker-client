@@ -1,15 +1,15 @@
 import schema from './statemachine/schema'
 
 
+function getInitialState () {
+  return schema.initial_state
+}
+
 function getState (state) {
   return schema.states[state]
 }
 
-function getStateActions (state) {
-  return getState(state).actions
-}
-
 export default {
-  getState,
-  getStateActions
+  getInitialState,
+  getState
 }

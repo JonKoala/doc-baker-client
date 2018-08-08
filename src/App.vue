@@ -1,7 +1,7 @@
 <template>
   <v-app id="app" light>
     <v-toolbar app fixed clipped-left>
-      <v-toolbar-title>DOC BAKER</v-toolbar-title>
+      <v-toolbar-title><v-icon style="transform:rotate(-45deg)" >local_pizza</v-icon><span class="pl-2">DOC BAKER</span></v-toolbar-title>
     </v-toolbar>
     <v-content>
       <v-slide-x-transition mode="out-in">

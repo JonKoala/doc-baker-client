@@ -1,7 +1,7 @@
 import { QUESTION, FORM } from './state.type'
 
 export default {
-  initial: 'q-1',
+  initial_state: 'q-1',
   states: {
     'q-1': {
       type: QUESTION,

@@ -1,58 +1,44 @@
 <template>
   <v-container fluid>
     <v-card class="pb-3">
-      <v-stepper v-bind:value="history.length" vertical class="elevation-0">
-        <v-stepper-step v-for="state in history" v-bind:key="state" v-bind:complete="state != currentState" v-bind:step="getStateIndex(state)">
-          {{ getStateTitle(state) }}
-          <small v-if="answers.length >= getStateIndex(state)">{{ answers[getStateIndex(state) - 1] }}</small>
+      <v-stepper vertical class="elevation-0">
+        <v-stepper-step v-for="step in workflowSteps" v-bind:key="step.state" v-bind:complete="step.index < workflowCurrentStep.index" v-bind:step="step.index">
+          {{ step.title }}
+          <small>{{ step.action }}</small>
         </v-stepper-step>
       </v-stepper>
-      <div class="pl-3">
-        <v-btn v-for="option in currentStateOptions" v-bind:key="option.text" v-on:click="next(option.state, option.text)" >{{ option.text }}</v-btn>
-        <v-btn v-if="history.length > 1" v-on:click="onBack" >voltar</v-btn>
+      <div class="fluid px-3">
+        <v-btn v-for="option in workflowCurrentStep.options" v-bind:key="option" v-on:click="optionClick(option)" >{{ option }}</v-btn>
+        <v-btn style="float: right" v-if="workflowSteps.length > 1" v-on:click="undoClick" >voltar</v-btn>
       </div>
     </v-card>
   </v-container>
 </template>
 
 <script>
-import sm from 'services/statemachine.service'
+import { mapGetters } from 'vuex'
+
+import { TAKE_WORKFLOW_ACTION, UNDO_WORKFLOW_LATEST_ACTION } from 'store/actions.type'
 
 export default {
   name: 'ViewWorkflow',
-  data () {
-    return {
-      history: ['q-1'],
-      answers: []
-    }
+  computed: {
+    ...mapGetters([
+      'workflowSteps',
+      'workflowCurrentStep'
+    ]),
   },
   methods: {
-    next (state, answer) {
-      this.history.push(state)
-      this.answers.push(answer)
-
+    optionClick (option) {
+      this.$store.dispatch(TAKE_WORKFLOW_ACTION, option)
+      this.scrollBottom()
+    },
+    scrollBottom () {
       window.setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 0)
     },
-    getStateTitle (state) {
-      return sm.getState(state).title
-    },
-    getStateIndex (state) {
-      return this.history.findIndex(s => s === state) + 1
-    },
-    onBack () {
-      this.history.pop()
-      this.answers.pop()
-    }
-  },
-  computed: {
-    currentState () {
-      return this.history[this.history.length-1]
-    },
-    currentStateOptions () {
-      return sm.getStateActions(this.currentState)
-    },
-    currentStateTitle () {
-      return this.getStateTitle(this.currentState)
+    undoClick () {
+      this.$store.dispatch(UNDO_WORKFLOW_LATEST_ACTION)
+      this.scrollBottom()
     }
   }
 }
