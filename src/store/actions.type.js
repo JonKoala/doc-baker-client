@@ -1,2 +1,7 @@
+export const FETCH_PROJETO = 'fetchProjeto'
+export const SAVE_PROJETO = 'saveProjeto'
+export const SET_PROJETO = 'setProjeto'
 export const TAKE_WORKFLOW_ACTION = 'takeWorkflowAction'
+export const TAKE_WORKFLOW_ACTION_OFFLINE = 'takeWorkflowActionOffline'
 export const UNDO_WORKFLOW_LATEST_ACTION = 'undoWorkflowLatestAction'
+export const UPDATE_PROJETO = 'updateProjeto'
