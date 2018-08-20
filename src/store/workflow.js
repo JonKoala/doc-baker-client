@@ -1,31 +1,27 @@
 import Vue from 'vue'
 
+import ApiService from 'services/api.service'
 import stateMachine from 'services/statemachine.service'
 
-import { TAKE_WORKFLOW_ACTION, TAKE_WORKFLOW_ACTION_OFFLINE, UNDO_WORKFLOW_LATEST_ACTION, UPDATE_PROJETO } from 'store/actions.type'
-import { ADD_WORKFLOW_STEP, DELETE_WORKFLOW_LATEST_STEP, RESET_WORKFLOW_STATE, SET_WORKFLOW_LATEST_STEP_ACTION } from 'store/mutations.type'
+import { SET_WORKFLOW, TAKE_WORKFLOW_ACTION, UNDO_WORKFLOW_LATEST_ACTION } from 'store/actions.type'
+import { ADD_WORKFLOW_STEP, DELETE_WORKFLOW_LATEST_STEP, RESET_WORKFLOW_STATE, SET_WORKFLOW_LATEST_STEP_ACTION, SET_WORKFLOW_STEPS } from 'store/mutations.type'
 
 
 const initialState = {
-  history: [{
-      action: null, // String
-      index: 1,
-      state: stateMachine.getInitialState() // String
-  }]
+  steps: [] // [{ state: [STRING], action: [STRING] }]
 }
 const state = Object.assign({}, initialState)
 
 const getters = {
 
   workflow (state) {
-    return state.history.map(entry => {
-      return { state: entry.state, action: entry.action }
-    })
+    return state.steps
   },
   workflowSteps (state) {
-    return state.history.map(entry => {
+    return state.steps.map((entry, index) => {
       return {
         ...entry,
+        index: index + 1,
         title: stateMachine.getState(entry['state'])['title']
       }
     })
@@ -43,13 +39,16 @@ const getters = {
 const mutations = {
 
   [ADD_WORKFLOW_STEP] (state, stepState) {
-    state.history.push({ action: null, index: state.history.length + 1, state: stepState })
+    state.steps.push({ action: null, state: stepState })
   },
   [DELETE_WORKFLOW_LATEST_STEP] (state) {
-    state.history.pop()
+    state.steps.pop()
   },
   [SET_WORKFLOW_LATEST_STEP_ACTION] (state, action) {
-    state.history[state.history.length - 1].action = action
+    Vue.set(state.steps[state.steps.length - 1], 'action', action)
+  },
+  [SET_WORKFLOW_STEPS] (state, steps) {
+    state.steps = steps
   },
   [RESET_WORKFLOW_STATE] (state) {
     for (let f in state) {
@@ -61,19 +60,21 @@ const mutations = {
 
 const actions = {
 
-  [TAKE_WORKFLOW_ACTION_OFFLINE] ({ commit, getters }, action) {
+  [SET_WORKFLOW] ({ commit }, steps) {
+    commit(SET_WORKFLOW_STEPS, steps)
+  },
+  [TAKE_WORKFLOW_ACTION] ({ commit, getters }, action) {
     action = stateMachine.getState(getters.workflowCurrentStep.state)['actions'].find(a => a.text === action)
     commit(SET_WORKFLOW_LATEST_STEP_ACTION, action.text)
     commit(ADD_WORKFLOW_STEP, action.state)
+
+    ApiService.put('processos', { _id: getters.processoId, workflow: getters.workflow })
   },
-  async [TAKE_WORKFLOW_ACTION] ({ dispatch }, action) {
-    await dispatch(TAKE_WORKFLOW_ACTION_OFFLINE, action)
-    await dispatch(UPDATE_PROJETO)
-  },
-  async [UNDO_WORKFLOW_LATEST_ACTION] ({ commit, dispatch }) {
+  [UNDO_WORKFLOW_LATEST_ACTION] ({ commit, getters }) {
     commit(DELETE_WORKFLOW_LATEST_STEP)
     commit(SET_WORKFLOW_LATEST_STEP_ACTION, null)
-    await dispatch(UPDATE_PROJETO)
+
+    ApiService.put('processos', { _id: getters.processoId, workflow: getters.workflow })
   }
 
 }

@@ -1,13 +1,13 @@
 <template>
   <v-container fluid>
-    <v-card class="pb-3">
-      <v-stepper vertical class="elevation-0">
-        <v-stepper-step v-for="step in workflowSteps" v-bind:key="step.state" v-bind:complete="step.index < workflowCurrentStep.index" v-bind:step="step.index">
+    <v-card v-if="workflowSteps.length > 0" class="pb-3">
+      <v-stepper v-bind:value="workflowCurrentStep.index" v-bind:key="workflowCurrentStep.index" vertical class="elevation-0">
+        <v-stepper-step v-for="step in workflowSteps" v-bind:key="step.index" v-bind:complete="workflowCurrentStep.index > step.index" v-bind:step="step.index">
           {{ step.title }}
           <small>{{ step.action }}</small>
         </v-stepper-step>
       </v-stepper>
-      <v-layout  justify-space-between class="px-3">
+      <v-layout justify-space-between class="px-3">
         <div>
           <v-btn v-for="option in workflowCurrentStep.options" v-bind:key="option" v-on:click="optionClick(option)" >{{ option }}</v-btn>
         </div>
@@ -20,12 +20,12 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import { FETCH_PROJETO, TAKE_WORKFLOW_ACTION, UNDO_WORKFLOW_LATEST_ACTION } from 'store/actions.type'
+import { FETCH_PROCESSO, TAKE_WORKFLOW_ACTION, UNDO_WORKFLOW_LATEST_ACTION } from 'store/actions.type'
 
 export default {
-  name: 'ViewWorkflow',
+  name: 'ViewEditProcesso',
   async created () {
-    await this.$store.dispatch(FETCH_PROJETO, this.$route.params.id)
+    await this.$store.dispatch(FETCH_PROCESSO, this.$route.params.id)
     this.scrollBottom()
   },
   computed: {

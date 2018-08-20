@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import ViewHome from 'views/ViewHome'
-import ViewWorkflow from 'views/ViewWorkflow'
+import ViewEditProcesso from 'views/ViewEditProcesso'
 
 
 Vue.use(VueRouter)
@@ -16,9 +16,9 @@ export default new VueRouter({
       component: ViewHome
     },
     {
-      name: 'workflow',
-      path: '/workflow/:id',
-      component: ViewWorkflow
+      name: 'processo',
+      path: '/processo/:id',
+      component: ViewEditProcesso
     }
   ],
   mode: 'history'
