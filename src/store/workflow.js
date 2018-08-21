@@ -17,6 +17,9 @@ const getters = {
   workflow (state) {
     return state.steps
   },
+  workflowFreshModel () {
+    return [{ action: null, state: stateMachine.getInitialState() }]
+  },
   workflowSteps (state) {
     return state.steps.map((entry, index) => {
       return {
@@ -27,6 +30,9 @@ const getters = {
     })
   },
   workflowCurrentStep (state, getters) {
+    if (getters.workflowSteps.length < 1)
+      return {}
+
     var latest = getters.workflowSteps[getters.workflowSteps.length - 1]
     return {
       ...latest,

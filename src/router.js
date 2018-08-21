@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 import ViewHome from 'views/ViewHome'
 import ViewEditProcesso from 'views/ViewEditProcesso'
+import ViewNewProcesso from 'views/ViewNewProcesso.vue'
 
 
 Vue.use(VueRouter)
@@ -16,7 +17,12 @@ export default new VueRouter({
       component: ViewHome
     },
     {
-      name: 'processo',
+      name: 'newProcesso',
+      path: '/processo',
+      component: ViewNewProcesso
+    },
+    {
+      name: 'editProcesso',
       path: '/processo/:id',
       component: ViewEditProcesso
     }

@@ -2,7 +2,7 @@ import Vue from 'vue'
 
 import ApiService from 'services/api.service'
 
-import { FETCH_PROCESSO, SAVE_PROCESSO, SET_PROCESSO, SET_WORKFLOW, UPDATE_PROCESSO } from 'store/actions.type'
+import { CREATE_PROCESSO, FETCH_PROCESSO, SET_PROCESSO, SET_WORKFLOW, UPDATE_PROCESSO } from 'store/actions.type'
 import { RESET_PROCESSO_STATE, SET_PROCESSO_ANO, SET_PROCESSO_ID, SET_PROCESSO_NOME, SET_PROCESSO_NUMERO } from 'store/mutations.type'
 
 
@@ -16,7 +16,7 @@ const state = Object.assign({}, initialState)
 
 const getters = {
 
-  Processo(state) {
+  processo(state) {
     return state
   },
   processoId(state) {
@@ -58,27 +58,24 @@ const mutations = {
 
 const actions = {
 
+  async [CREATE_PROCESSO] ({ dispatch, getters }) {
+    var response = await ApiService.post('processos', { ...getters.processo, workflow: getters.workflowFreshModel })
+    await dispatch(SET_PROCESSO, response.data)
+  },
   async [FETCH_PROCESSO] ({ dispatch }, id) {
     var processo = await ApiService.get(`processos/${id}`)
     dispatch(SET_PROCESSO, processo)
     dispatch(SET_WORKFLOW, processo.workflow)
   },
-  async [SAVE_PROCESSO] ({ dispatch }) {
-    var saved = await dispatch(UPDATE_PROCESSO)
-    dispatch(SET_PROCESSO, saved)
-  },
   [SET_PROCESSO] ({ commit }, processo) {
-    commit(RESET_PROCESSO_STATE)
-
     commit(SET_PROCESSO_ID, processo._id)
     commit(SET_PROCESSO_NOME, processo.nome)
     commit(SET_PROCESSO_NUMERO, processo.numero)
     commit(SET_PROCESSO_ANO, processo.ano)
   },
   async [UPDATE_PROCESSO] ({ getters }) {
-    var processo = { ...getters.processo, workflow: getters.workflow }
-    var saved = (processo._id) ? await ApiService.put('processos', processo) : await ApiService.post('processos', processo)
-    return saved.data
+    var response = await ApiService.put('processos', getters.processo)
+    await dispatch(SET_PROCESSO, response.data)
   }
 
 }

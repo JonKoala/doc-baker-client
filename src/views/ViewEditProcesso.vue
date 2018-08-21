@@ -21,13 +21,10 @@
 import { mapGetters } from 'vuex'
 
 import { FETCH_PROCESSO, TAKE_WORKFLOW_ACTION, UNDO_WORKFLOW_LATEST_ACTION } from 'store/actions.type'
+import { RESET_PROCESSO_STATE, RESET_WORKFLOW_STATE } from 'store/mutations.type'
 
 export default {
   name: 'ViewEditProcesso',
-  async created () {
-    await this.$store.dispatch(FETCH_PROCESSO, this.$route.params.id)
-    this.scrollBottom()
-  },
   computed: {
     ...mapGetters([
       'workflowSteps',
@@ -46,6 +43,13 @@ export default {
       await this.$store.dispatch(UNDO_WORKFLOW_LATEST_ACTION)
       this.scrollBottom()
     }
+  },
+  async created () {
+    this.$store.commit(RESET_PROCESSO_STATE)
+    this.$store.commit(RESET_WORKFLOW_STATE)
+
+    await this.$store.dispatch(FETCH_PROCESSO, this.$route.params.id)
+    this.scrollBottom()
   }
 }
 </script>
