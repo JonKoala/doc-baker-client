@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-0">
-    <v-stepper v-bind:value="latestStep.index" v-bind:key="latestStep.index" vertical class="elevation-0">
+    <v-stepper v-bind:value="latestStep.index" v-bind:key="latestStep.index" vertical class="elevation-0 pa-0">
       <v-stepper-step v-for="step in steps" v-bind:key="step.index" v-bind:complete="latestStep.index > step.index" v-bind:step="step.index">
         {{ step.title }}
         <small>{{ step.action }}</small>
