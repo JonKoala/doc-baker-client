@@ -1,17 +1,12 @@
 <template>
   <v-container fluid>
-    <v-card v-if="workflowSteps.length > 0" class="pb-3">
-      <v-stepper v-bind:value="workflowCurrentStep.index" v-bind:key="workflowCurrentStep.index" vertical class="elevation-0">
-        <v-stepper-step v-for="step in workflowSteps" v-bind:key="step.index" v-bind:complete="workflowCurrentStep.index > step.index" v-bind:step="step.index">
-          {{ step.title }}
-          <small>{{ step.action }}</small>
-        </v-stepper-step>
-      </v-stepper>
+    <v-card v-if="workflow.length > 0" class="pb-3">
+      <workflow-Viewer v-bind:value="workflow"></workflow-Viewer>
       <v-layout justify-space-between class="px-3">
         <div>
-          <v-btn v-for="option in workflowCurrentStep.options" v-bind:key="option" v-on:click="optionClick(option)" >{{ option }}</v-btn>
+          <v-btn v-for="option in workflowOptions.map(o => o.text)" v-bind:key="option" v-on:click="optionClick(option)" >{{ option }}</v-btn>
         </div>
-        <v-btn style="float: right" v-if="workflowSteps.length > 1" v-on:click="undoClick" >voltar</v-btn>
+        <v-btn style="float: right" v-if="workflow.length > 1" v-on:click="undoClick" >voltar</v-btn>
       </v-layout>
     </v-card>
   </v-container>
@@ -23,12 +18,17 @@ import { mapGetters } from 'vuex'
 import { FETCH_PROCESSO, TAKE_WORKFLOW_ACTION, UNDO_WORKFLOW_LATEST_ACTION } from 'store/actions.type'
 import { RESET_PROCESSO_STATE, RESET_WORKFLOW_STATE } from 'store/mutations.type'
 
+import WorkflowViewer from 'components/WorkflowViewer'
+
 export default {
-  name: 'ViewEditProcesso',
+  name: 'ViewProcessoEdit',
+  components: {
+    WorkflowViewer
+  },
   computed: {
     ...mapGetters([
-      'workflowSteps',
-      'workflowCurrentStep'
+      'workflow',
+      'workflowOptions'
     ])
   },
   methods: {

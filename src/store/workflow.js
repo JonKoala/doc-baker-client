@@ -20,24 +20,9 @@ const getters = {
   workflowFreshModel () {
     return [{ action: null, state: stateMachine.getInitialState() }]
   },
-  workflowSteps (state) {
-    return state.steps.map((entry, index) => {
-      return {
-        ...entry,
-        index: index + 1,
-        title: stateMachine.getState(entry['state'])['title']
-      }
-    })
-  },
-  workflowCurrentStep (state, getters) {
-    if (getters.workflowSteps.length < 1)
-      return {}
-
-    var latest = getters.workflowSteps[getters.workflowSteps.length - 1]
-    return {
-      ...latest,
-      options: stateMachine.getState(latest['state'])['actions'].map(a => { return a.text })
-    }
+  workflowOptions (state, getters) {
+    var latest = getters.workflow[getters.workflow.length - 1]
+    return stateMachine.getState(latest['state'])['actions']
   }
 
 }
@@ -70,7 +55,7 @@ const actions = {
     commit(SET_WORKFLOW_STEPS, steps)
   },
   [TAKE_WORKFLOW_ACTION] ({ commit, getters }, action) {
-    action = stateMachine.getState(getters.workflowCurrentStep.state)['actions'].find(a => a.text === action)
+    action = getters.workflowOptions.find(o => o.text === action)
     commit(SET_WORKFLOW_LATEST_STEP_ACTION, action.text)
     commit(ADD_WORKFLOW_STEP, action.state)
 

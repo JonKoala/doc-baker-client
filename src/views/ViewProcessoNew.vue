@@ -30,7 +30,7 @@ import { RESET_PROCESSO_STATE, RESET_WORKFLOW_STATE, SET_PROCESSO_ANO, SET_PROCE
 import BaseIconButton from 'components/BaseIconButton'
 
 export default {
-  name: 'ViewNewProcesso',
+  name: 'ViewProcessoNew',
   components: {
     BaseIconButton
   },
