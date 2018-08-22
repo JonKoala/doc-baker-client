@@ -1,6 +1,6 @@
 <template>
   <v-tooltip v-bind="{top, right, bottom, left}" v-bind:disabled="!hasTooltip">
-    <v-btn v-on="$listeners" v-bind="{disabled, flat, href, target}" slot="activator" class="ma-0" icon>
+    <v-btn v-on="$listeners" v-bind="{disabled, flat, href, target, to}" slot="activator" class="ma-0" icon>
       <v-icon v-bind="{color}"><slot></slot></v-icon>
     </v-btn>
     <span>{{ tooltip }}</span>
@@ -19,6 +19,7 @@ export default {
     // Link
     href: { type: String },
     target: { type: String },
+    to: { type: String },
 
     // Position
     top: { type: String },

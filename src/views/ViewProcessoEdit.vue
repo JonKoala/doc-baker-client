@@ -6,13 +6,14 @@
         <div>
           <v-btn v-for="option in workflowOptions.map(o => o.text)" v-bind:key="option" v-on:click="optionClick(option)" >{{ option }}</v-btn>
         </div>
-        <v-btn style="float: right" v-if="workflow.length > 1" v-on:click="undoClick" >voltar</v-btn>
+        <v-btn v-if="workflow.length > 1" v-on:click="undoClick" >voltar</v-btn>
       </v-layout>
     </v-card>
   </v-container>
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapGetters } from 'vuex'
 
 import { FETCH_PROCESSO, TAKE_WORKFLOW_ACTION, UNDO_WORKFLOW_LATEST_ACTION } from 'store/actions.type'
@@ -36,8 +37,9 @@ export default {
       await this.$store.dispatch(TAKE_WORKFLOW_ACTION, option)
       this.scrollBottom()
     },
-    scrollBottom () {
-      window.setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 0)
+    async scrollBottom () {
+      await Vue.nextTick()
+      window.scrollTo(0, document.body.scrollHeight)
     },
     async undoClick () {
       await this.$store.dispatch(UNDO_WORKFLOW_LATEST_ACTION)

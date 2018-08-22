@@ -28,9 +28,9 @@
         <v-toolbar color="blue darken-2" dense card>
           <v-toolbar-title class="white--text">WORKFLOW</v-toolbar-title>
           <v-spacer></v-spacer>
-          <base-icon-button v-bind:href="linkToEdit" target="_blank" color="white" tooltip="editar" top>edit</base-icon-button>
+          <base-icon-button v-bind:to="linkToEdit" color="white" tooltip="editar" top>edit</base-icon-button>
         </v-toolbar>
-        <v-card-text style="height:300px">
+        <v-card-text ref="dialogContent" style="height:300px">
           <workflow-viewer v-if="dialogProcessoWorkflow.length > 0" v-bind:value="dialogProcessoWorkflow" class="pb-1"></workflow-viewer>
         </v-card-text>
       </v-card>
@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import Vue from 'vue'
+
 import ApiService from 'services/api.service'
 
 import BaseIconButton from 'components/BaseIconButton'
@@ -71,10 +73,13 @@ export default {
     }
   },
   methods: {
-    showDetails (item) {
+    async showDetails (item) {
       this.dialogProcessoId = item._id
       this.dialogProcessoWorkflow = item.workflow
       this.dialog = true
+
+      await Vue.nextTick()
+      this.$refs.dialogContent.scrollTo(0, this.$refs.dialogContent.scrollHeight)
     }
   },
   async created () {
