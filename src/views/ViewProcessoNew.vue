@@ -7,13 +7,15 @@
             <v-toolbar-title class="white--text">NOVO PROCESSO</v-toolbar-title>
           </v-toolbar>
           <v-layout row wrap justify-space-around class="pa-2">
-            <v-text-field v-bind:value="processoNumero" v-on:input="onNumeroInput" label="Número" class="px-2"></v-text-field>
-            <v-text-field v-bind:value="processoAno" v-on:input="onAnoInput" label="Ano" class="px-2"></v-text-field>
+            <v-text-field v-bind:value="processoNumero" v-on:input="updateNumero" label="Número" class="px-2"></v-text-field>
+            <v-text-field v-bind:value="processoAno" v-on:input="updateAno" label="Ano" class="px-2"></v-text-field>
           </v-layout>
           <v-layout row wrap justify-space-around class="pa-2">
-            <v-text-field v-bind:value="processoNome" v-bind:disabled="!isNomeEditable" v-on:input="onNomeInput" label="Nome" class="pl-2"></v-text-field>
-            <base-icon-button v-on:click="onEditButtonClick" v-bind:tooltip="nomeEditButtonTooltip" top class="pt-3 pr-4">{{ nomeEditButtonIcon }}</base-icon-button>
-            <v-btn v-bind:disabled="!isSavable" v-on:click="onSaveButtonClick" large class="mt-1">Salvar</v-btn>
+            <v-text-field v-bind:value="processoNome" v-bind:disabled="!isNomeEditable" v-on:input="updateNome" label="Nome" class="pl-2"></v-text-field>
+            <base-icon-button v-on:click="toggleNomeEditMode" v-bind:tooltip="nomeEditModeButtonTooltip" top class="pt-3 pr-4">
+              {{ nomeEditModeButtonIcon }}
+            </base-icon-button>
+            <v-btn v-bind:disabled="!isSavable" v-on:click="saveProcesso" large class="mt-1">Salvar</v-btn>
           </v-layout>
         </v-card>
       </v-flex>
@@ -49,41 +51,41 @@ export default {
     isSavable () {
       return this.processoAno && this.processoNome && this.processoNumero
     },
-    nomeEditButtonIcon () {
+    nomeEditModeButtonIcon () {
       return (this.isNomeEditable) ? 'sync' : 'edit'
     },
-    nomeEditButtonTooltip () {
+    nomeEditModeButtonTooltip () {
       return (this.isNomeEditable) ? 'automatico' : 'manual'
     }
   },
   methods: {
-    onEditButtonClick () {
-      this.isNomeEditable = !this.isNomeEditable
-      this.updateNome()
-    },
-    async onSaveButtonClick () {
-      await this.$store.dispatch(CREATE_PROCESSO)
-      this.$router.push({ name: 'editProcesso', params: { id: this.processoId } })
-    },
-    onAnoInput (ano) {
-      this.$store.commit(SET_PROCESSO_ANO, ano)
-      this.updateNome()
-    },
-    onNomeInput (nome) {
-      this.$store.commit(SET_PROCESSO_NOME, nome)
-    },
-    onNumeroInput (numero) {
-      this.$store.commit(SET_PROCESSO_NUMERO, numero)
-      this.updateNome()
-    },
-    updateNome () {
+    autoUpdateNome () {
       if (this.isNomeEditable)
         return
 
       if (this.processoNumero && this.processoAno)
-        this.$store.commit(SET_PROCESSO_NOME, `${this.processoNumero}/${this.processoAno}`)
+        this.updateNome(`${this.processoNumero}/${this.processoAno}`)
       else
-        this.$store.commit(SET_PROCESSO_NOME, null)
+        this.updateNome(null)
+    },
+    async saveProcesso () {
+      await this.$store.dispatch(CREATE_PROCESSO)
+      this.$router.push({ name: 'editProcesso', params: { id: this.processoId } })
+    },
+    toggleNomeEditMode () {
+      this.isNomeEditable = !this.isNomeEditable
+      this.autoUpdateNome()
+    },
+    updateAno (ano) {
+      this.$store.commit(SET_PROCESSO_ANO, ano)
+      this.autoUpdateNome()
+    },
+    updateNome (nome) {
+      this.$store.commit(SET_PROCESSO_NOME, nome)
+    },
+    updateNumero (numero) {
+      this.$store.commit(SET_PROCESSO_NUMERO, numero)
+      this.autoUpdateNome()
     }
   },
   created () {
