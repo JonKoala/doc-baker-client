@@ -22,7 +22,8 @@ const getters = {
   },
   workflowOptions (state, getters) {
     var latest = getters.workflow[getters.workflow.length - 1]
-    return stateMachine.getState(latest['state'])['actions']
+    if (latest)
+      return stateMachine.getState(latest['state'])['actions']
   }
 
 }

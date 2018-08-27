@@ -6,12 +6,13 @@
           <v-toolbar color="blue-grey" dense card>
             <v-toolbar-title class="white--text">PROCESSOS</v-toolbar-title>
           </v-toolbar>
-          <v-layout row justify-end class="pt-3 pb-5 pr-4">
+          <v-progress-linear v-show="isLoading" class="my-0" color="blue" indeterminate></v-progress-linear>
+          <v-layout v-if="showResults" row justify-end class="pt-3 pb-5 pr-4">
             <v-flex xs4>
-              <v-text-field v-model="search" append-icon="search" label="Busca" single-line hide-details></v-text-field>
+              <v-text-field v-bind:value="search" v-on:input="filterResults" append-icon="search" label="Busca" single-line hide-details></v-text-field>
             </v-flex>
           </v-layout>
-          <v-data-table v-bind="{ headers, items, search }" hide-actions>
+          <v-data-table v-if="showResults" v-bind="{ headers, items, search }" hide-actions>
             <template slot="items" slot-scope="props">
               <tr v-on:click="showDetails(props.item)">
                 <td>{{ props.item.nome }}</td>
@@ -20,6 +21,8 @@
               </tr>
             </template>
           </v-data-table>
+          <v-alert v-bind:value="isEmpty" class="my-0" color="warning" icon="priority_high">Nenhum processo encontrado</v-alert>
+          <v-alert v-bind:value="isError" class="my-0" color="error" icon="warning">Erro na busca dos processos</v-alert>
         </v-card>
       </v-flex>
     </v-layout>
@@ -31,7 +34,7 @@
           <base-icon-button v-bind:to="linkToEdit" color="white" tooltip="editar" top>edit</base-icon-button>
         </v-toolbar>
         <v-card-text ref="dialogContent" style="height:300px">
-          <workflow-viewer v-if="dialogProcessoWorkflow.length > 0" v-bind:value="dialogProcessoWorkflow" class="pb-1"></workflow-viewer>
+          <workflow-viewer v-if="processo.workflow.length > 0" v-bind:value="processo.workflow" class="pb-1"></workflow-viewer>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -40,8 +43,11 @@
 
 <script>
 import Vue from 'vue'
+import { mapGetters } from 'vuex'
 
-import ApiService from 'services/api.service'
+import { NAMESPACE } from 'store/views/home.type'
+import { START_VIEW } from 'store/views/home.type'
+import { SET_PROCESSO, SET_SEARCH } from 'store/views/home.type'
 
 import BaseIconButton from 'components/BaseIconButton'
 import WorkflowViewer from 'components/WorkflowViewer'
@@ -54,28 +60,40 @@ export default {
   },
   data () {
     return {
-      headers: [
-        {text: 'NOME', value: 'nome'},
-        {text: 'NÚMERO', value: 'numero'},
-        {text: 'ANO', value: 'ano'}
-      ],
-      items: [],
-      search: null,
-
       dialog: false,
-      dialogProcessoId: null,
-      dialogProcessoWorkflow: []
+      isError: false
     }
   },
   computed: {
+    ...mapGetters(NAMESPACE, [
+      'isLoading',
+      'items',
+      'processo',
+      'search'
+    ]),
+    headers () {
+      return [
+        {text: 'NOME', value: 'nome'},
+        {text: 'NÚMERO', value: 'numero'},
+        {text: 'ANO', value: 'ano'}
+      ]
+    },
+    isEmpty () {
+      return !this.isLoading && !this.isError && this.items.length === 0
+    },
     linkToEdit () {
-      return `processo/${this.dialogProcessoId}`
+      return `processo/${this.processo.id}`
+    },
+    showResults () {
+      return !this.isLoading && !this.isError && !this.isEmpty
     }
   },
   methods: {
+    filterResults (filter) {
+      this.$store.commit(`${NAMESPACE}/${SET_SEARCH}`, filter)
+    },
     async showDetails (item) {
-      this.dialogProcessoId = item._id
-      this.dialogProcessoWorkflow = item.workflow
+      this.$store.commit(`${NAMESPACE}/${SET_PROCESSO}`, item)
       this.dialog = true
 
       await Vue.nextTick()
@@ -83,7 +101,12 @@ export default {
     }
   },
   async created () {
-    this.items = await ApiService.get('processos')
+    try {
+      await this.$store.dispatch(`${NAMESPACE}/${START_VIEW}`)
+    } catch (err) {
+      this.isError = true
+      console.log(err)
+    }
   }
 }
 </script>
