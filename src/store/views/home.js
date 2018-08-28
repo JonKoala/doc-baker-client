@@ -1,16 +1,21 @@
+import Vue from 'vue'
+
 import ApiService from 'services/api.service'
 
 import { START_VIEW } from './home.type'
-import { END_LOADING, SET_ITEMS, SET_PROCESSO, SET_SEARCH, START_LOADING } from './home.type'
+import { END_LOADING, RESET_STATE, SET_ITEMS, SET_PROCESSO, SET_SEARCH, START_LOADING } from './home.type'
 
 
-const state = {
+const initialState = {
   isLoading: false,
   items: [],
-  processoId: null, // Number
-  processoWorkflow: [],
+  processo: {
+    id: null, // Number
+    workflow: []
+  },
   search: null // String
 }
+const state = Object.assign({}, initialState)
 
 const getters = {
 
@@ -21,10 +26,7 @@ const getters = {
     return state.items
   },
   processo (state) {
-    return {
-      id: state.processoId,
-      workflow: state.processoWorkflow
-    }
+    return state.processo
   },
   search (state) {
     return state.search
@@ -41,14 +43,18 @@ const mutations = {
     state.items = items
   },
   [SET_PROCESSO] (state, processo) {
-    state.processoId = processo._id
-    state.processoWorkflow = processo.workflow
+    state.processo = processo
   },
   [SET_SEARCH] (state, search) {
     state.search = search
   },
   [START_LOADING] (state) {
     state.isLoading = true
+  },
+  [RESET_STATE] (state) {
+    for (let f in state) {
+      Vue.set(state, f, initialState[f]);
+    }
   }
 
 }
@@ -56,10 +62,12 @@ const mutations = {
 const actions = {
 
   async [START_VIEW] ({ commit }) {
+    commit(RESET_STATE)
     commit(START_LOADING)
 
     try {
       var items = await ApiService.get('processos/abstract')
+      items.forEach(item => item.id = item._id)
       commit(SET_ITEMS, items)
     } catch(err) {
       throw err

@@ -6,6 +6,8 @@ import workflow from './models/workflow'
 
 import home from './views/home'
 import { NAMESPACE as homeNamespace } from './views/home.type'
+import processoNew from './views/processoNew'
+import { NAMESPACE as processoNewNamespace } from './views/processoNew.type'
 
 
 Vue.use(Vuex)
@@ -15,6 +17,7 @@ export default new Vuex.Store({
     processo,
     workflow,
 
-    [homeNamespace]: home
+    [homeNamespace]: home,
+    [processoNewNamespace]: processoNew
   }
 })

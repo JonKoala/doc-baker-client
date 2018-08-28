@@ -2,6 +2,7 @@ export const NAMESPACE = 'views/home'
 
 // Mutations
 export const END_LOADING = 'endLoading'
+export const RESET_STATE = 'resetState'
 export const SET_ITEMS = 'setItems'
 export const SET_PROCESSO = 'setProcesso'
 export const SET_SEARCH = 'setSearch'

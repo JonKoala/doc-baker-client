@@ -9,7 +9,7 @@
           <v-progress-linear v-show="isLoading" class="my-0" color="blue" indeterminate></v-progress-linear>
           <v-layout v-if="showResults" row justify-end class="pt-3 pb-5 pr-4">
             <v-flex xs4>
-              <v-text-field v-bind:value="search" v-on:input="filterResults" append-icon="search" label="Busca" single-line hide-details></v-text-field>
+              <v-text-field v-model="filter" append-icon="search" label="Busca" single-line hide-details></v-text-field>
             </v-flex>
           </v-layout>
           <v-data-table v-if="showResults" v-bind="{ headers, items, search }" hide-actions>
@@ -21,8 +21,8 @@
               </tr>
             </template>
           </v-data-table>
-          <v-alert v-bind:value="isEmpty" class="my-0" color="warning" icon="priority_high">Nenhum processo encontrado</v-alert>
-          <v-alert v-bind:value="isError" class="my-0" color="error" icon="warning">Erro na busca dos processos</v-alert>
+          <v-alert v-model="isEmpty" class="my-0" color="warning" icon="priority_high">Nenhum processo encontrado</v-alert>
+          <v-alert v-model="isError" class="my-0" color="error" icon="warning">Erro na busca dos processos</v-alert>
         </v-card>
       </v-flex>
     </v-layout>
@@ -71,6 +71,10 @@ export default {
       'processo',
       'search'
     ]),
+    filter: {
+      get () { return this.search },
+      set (filter) { this.$store.commit(`${NAMESPACE}/${SET_SEARCH}`, filter) }
+    },
     headers () {
       return [
         {text: 'NOME', value: 'nome'},
@@ -89,9 +93,6 @@ export default {
     }
   },
   methods: {
-    filterResults (filter) {
-      this.$store.commit(`${NAMESPACE}/${SET_SEARCH}`, filter)
-    },
     async showDetails (item) {
       this.$store.commit(`${NAMESPACE}/${SET_PROCESSO}`, item)
       this.dialog = true
