@@ -43,11 +43,11 @@
 
 <script>
 import Vue from 'vue'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
-import { NAMESPACE } from 'store/views/home.type'
-import { START_VIEW } from 'store/views/home.type'
-import { SET_PROCESSO, SET_SEARCH } from 'store/views/home.type'
+import { START_VIEW, SELECT_PROCESSO } from 'store/action.types'
+import { SET_SEARCH } from 'store/mutation.types'
+import { VIEW_HOME } from 'store/namespaces'
 
 import BaseIconButton from 'components/BaseIconButton'
 import WorkflowViewer from 'components/WorkflowViewer'
@@ -65,7 +65,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(NAMESPACE, [
+    ...mapGetters(VIEW_HOME, [
       'isLoading',
       'items',
       'processo',
@@ -73,7 +73,7 @@ export default {
     ]),
     filter: {
       get () { return this.search },
-      set (filter) { this.$store.commit(`${NAMESPACE}/${SET_SEARCH}`, filter) }
+      set (filter) { this.setFilter(filter) }
     },
     headers () {
       return [
@@ -93,8 +93,15 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(VIEW_HOME, {
+      setFilter: SET_SEARCH
+    }),
+    ...mapActions(VIEW_HOME, {
+      selectItem: SELECT_PROCESSO,
+      startView: START_VIEW
+    }),
     async showDetails (item) {
-      this.$store.commit(`${NAMESPACE}/${SET_PROCESSO}`, item)
+      this.selectItem(item)
       this.dialog = true
 
       await Vue.nextTick()
@@ -103,7 +110,7 @@ export default {
   },
   async created () {
     try {
-      await this.$store.dispatch(`${NAMESPACE}/${START_VIEW}`)
+      await this.startView()
     } catch (err) {
       this.isError = true
       console.log(err)

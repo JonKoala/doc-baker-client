@@ -1,23 +1,18 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import processo from './models/processo'
-import workflow from './models/workflow'
-
-import home from './views/home'
-import { NAMESPACE as homeNamespace } from './views/home.type'
-import processoNew from './views/processoNew'
-import { NAMESPACE as processoNewNamespace } from './views/processoNew.type'
+import home from 'store/modules/view.home'
+import processoEdit from 'store/modules/view.processo.edit'
+import processoNew from 'store/modules/view.processo.new'
+import { VIEW_HOME, VIEW_PROCESSO_EDIT, VIEW_PROCESSO_NEW } from 'store/namespaces'
 
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    processo,
-    workflow,
-
-    [homeNamespace]: home,
-    [processoNewNamespace]: processoNew
+    [VIEW_HOME]: home,
+    [VIEW_PROCESSO_EDIT]: processoEdit,
+    [VIEW_PROCESSO_NEW]: processoNew
   }
 })

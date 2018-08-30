@@ -1,7 +1,0 @@
-export const CREATE_PROCESSO = 'createProcesso'
-export const FETCH_PROCESSO = 'fetchProcesso'
-export const SET_PROCESSO = 'setProcesso'
-export const SET_WORKFLOW = 'setWorkflow'
-export const TAKE_WORKFLOW_ACTION = 'takeWorkflowAction'
-export const UNDO_WORKFLOW_LATEST_ACTION = 'undoWorkflowLatestAction'
-export const UPDATE_PROCESSO = 'updateProcesso'

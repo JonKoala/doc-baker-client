@@ -7,7 +7,7 @@
             <workflow-viewer v-bind:value="workflow" v-on:step-change="updateFormVisibility"></workflow-viewer>
             <v-layout justify-space-between class="px-3">
               <div>
-                <v-btn v-for="option in workflowOptions.map(o => o.text)" v-bind:key="option" v-on:click="takeWorkflowAction(option)" >{{ option }}</v-btn>
+                <v-btn v-for="option in options.map(o => o.text)" v-bind:key="option" v-on:click="takeWorkflowAction(option)" >{{ option }}</v-btn>
               </div>
               <v-btn v-if="workflow.length > 1" v-on:click="undoWorkflowAction" >voltar</v-btn>
             </v-layout>
@@ -25,11 +25,11 @@
 
 <script>
 import Vue from 'vue'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import { FORM } from 'services/statemachine/state.type'
-import { FETCH_PROCESSO, TAKE_WORKFLOW_ACTION, UNDO_WORKFLOW_LATEST_ACTION } from 'store/actions.type'
-import { RESET_PROCESSO_STATE, RESET_WORKFLOW_STATE } from 'store/mutations.type'
+import { VIEW_PROCESSO_EDIT } from 'store/namespaces'
+import { START_VIEW, TAKE_ACTION, UNDO_ACTION } from 'store/action.types'
 
 import WorkflowViewer from 'components/WorkflowViewer'
 
@@ -44,34 +44,35 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters(VIEW_PROCESSO_EDIT, [
       'workflow',
-      'workflowOptions'
+      'options'
     ])
   },
   methods: {
+    ...mapActions(VIEW_PROCESSO_EDIT, {
+      startView: START_VIEW,
+      takeAction: TAKE_ACTION,
+      undoAction: UNDO_ACTION
+    }),
     async scrollToBottom () {
       await Vue.nextTick()
       this.$refs.workflowContainer.$el.scrollTo(0, this.$refs.workflowContainer.$el.scrollHeight)
     },
-    async takeWorkflowAction (option) {
-      await this.$store.dispatch(TAKE_WORKFLOW_ACTION, option)
+    async takeWorkflowAction (action) {
+      await this.takeAction(action)
       this.scrollToBottom()
     },
     async undoWorkflowAction () {
-      await this.$store.dispatch(UNDO_WORKFLOW_LATEST_ACTION)
+      await this.undoAction()
       this.scrollToBottom()
     },
     updateFormVisibility (step) {
       this.showingForm = (step.type === FORM)
     }
   },
-  created () {
-    this.$store.commit(RESET_PROCESSO_STATE)
-    this.$store.commit(RESET_WORKFLOW_STATE)
-  },
   async mounted () {
-    await this.$store.dispatch(FETCH_PROCESSO, this.$route.params.id)
+    await this.startView()
     this.scrollToBottom()
   }
 }

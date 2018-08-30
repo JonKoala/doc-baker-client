@@ -17,14 +17,14 @@ export default new VueRouter({
       component: ViewHome
     },
     {
-      name: 'newProcesso',
-      path: '/processo',
-      component: ViewProcessoNew
-    },
-    {
       name: 'editProcesso',
       path: '/processo/:id',
       component: ViewProcessoEdit
+    },
+    {
+      name: 'newProcesso',
+      path: '/processo',
+      component: ViewProcessoNew
     }
   ],
   mode: 'history'

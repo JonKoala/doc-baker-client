@@ -26,10 +26,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
-import { NAMESPACE } from 'store/views/processoNew.type'
-import { SAVE_PROCESSO, SET_PROCESSO_ANO, SET_PROCESSO_NOME, SET_PROCESSO_NUMERO, START_VIEW, TOGGLE_NOME_LOCKING } from 'store/views/processoNew.type'
+import { VIEW_PROCESSO_NEW } from 'store/namespaces'
+import { SAVE_PROCESSO, CHANGE_ANO, CHANGE_NOME, CHANGE_NUMERO, START_VIEW, TOGGLE_NOME_LOCKING } from 'store/action.types'
 
 import BaseIconButton from 'components/BaseIconButton'
 
@@ -44,22 +44,22 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(NAMESPACE, [
+    ...mapGetters(VIEW_PROCESSO_NEW, [
       'isLoading',
       'isNomeLocked',
       'processo'
     ]),
     processoAno: {
       get () { return this.processo.ano },
-      set (ano) { this.$store.dispatch(`${NAMESPACE}/${SET_PROCESSO_ANO}`, ano) }
+      set (ano) { this.setAno(ano) }
     },
     processoNome: {
       get () { return this.processo.nome },
-      set (nome) { this.$store.dispatch(`${NAMESPACE}/${SET_PROCESSO_NOME}`, nome) }
+      set (nome) { this.setNome(nome) }
     },
     processoNumero: {
       get () { return this.processo.numero },
-      set (numero) { this.$store.dispatch(`${NAMESPACE}/${SET_PROCESSO_NUMERO}`, numero) }
+      set (numero) { this.setNumero(numero) }
     },
     isSaveLocked () {
       return !(this.processoAno && this.processoNome && this.processoNumero)
@@ -72,21 +72,26 @@ export default {
     }
   },
   methods: {
+    ...mapActions(VIEW_PROCESSO_NEW, {
+      persistProcesso: SAVE_PROCESSO,
+      setAno: CHANGE_ANO,
+      setNome: CHANGE_NOME,
+      setNumero: CHANGE_NUMERO,
+      startView: START_VIEW,
+      toggleNomeEditMode: TOGGLE_NOME_LOCKING
+    }),
     async saveProcesso () {
       try {
-        await this.$store.dispatch(`${NAMESPACE}/${SAVE_PROCESSO}`)
+        await this.persistProcesso()
         this.$router.push({ name: 'editProcesso', params: { id: this.processo.id } })
       } catch (err) {
         this.isNotifying = true
         console.log(err)
       }
-    },
-    toggleNomeEditMode () {
-      this.$store.dispatch(`${NAMESPACE}/${TOGGLE_NOME_LOCKING}`)
     }
   },
   created () {
-    this.$store.dispatch(`${NAMESPACE}/${START_VIEW}`)
+    this.startView()
   }
 }
 </script>
