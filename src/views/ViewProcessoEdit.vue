@@ -14,9 +14,11 @@
           </div>
         </v-card>
       </v-flex>
-      <v-flex ref="formContainer" v-on:webkitTransitionEnd="scrollToBottom" v-on:transitionend="scrollToBottom"
-      class="form" v-bind:class="{ 'showing': showingForm }">
-        <v-card v-if="workflow.length > 0" class="pb-3" height="100%">
+      <v-flex v-on:webkitTransitionEnd="scrollToBottom" v-on:transitionend="scrollToBottom" class="form" v-bind:class="{ 'showing': showingForm }">
+        <v-card class="scrollable-container">
+          <div class="scrollable-content">
+            <form-mtp></form-mtp>
+          </div>
         </v-card>
       </v-flex>
     </v-layout>
@@ -31,11 +33,13 @@ import { FORM } from 'services/statemachine/state.type'
 import { VIEW_PROCESSO_EDIT } from 'store/namespaces'
 import { START_VIEW, TAKE_ACTION, UNDO_ACTION } from 'store/action.types'
 
+import FormMtp from 'components/FormMtp'
 import WorkflowViewer from 'components/WorkflowViewer'
 
 export default {
   name: 'ViewProcessoEdit',
   components: {
+    FormMtp,
     WorkflowViewer
   },
   data () {
