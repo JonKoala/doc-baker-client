@@ -1,9 +1,8 @@
 import ApiService from 'services/api.service'
 
-import processo from 'store/modules/processo.geral'
 import workflow from 'store/modules/processo.workflow'
 
-import { PROCESSO, WORKFLOW } from 'store/namespaces'
+import { WORKFLOW } from 'store/namespaces'
 import { END_LOADING, SET_STEPS, START_LOADING, RESET_STATE } from 'store/mutation.types'
 import { START_PROCESSO, START_VIEW, TAKE_ACTION, UNDO_ACTION } from 'store/action.types'
 
@@ -16,7 +15,6 @@ function getInitialState () {
 const state = getInitialState
 
 const modules = {
-  [PROCESSO]: processo,
   [WORKFLOW]: workflow
 }
 
@@ -54,15 +52,13 @@ const mutations = {
 
 const actions = {
 
-  async [START_VIEW] ({ commit, dispatch, getters }) {
+  async [START_VIEW] ({ commit, getters }) {
     commit(RESET_STATE)
-    commit(`${PROCESSO}/${RESET_STATE}`)
     commit(`${WORKFLOW}/${RESET_STATE}`)
 
     commit(START_LOADING)
     try {
-      var processo = await ApiService.get(`processos/${getters.paramId}`)
-      await dispatch(`${PROCESSO}/${START_PROCESSO}`, { ...processo, id: processo._id })
+      var processo = await ApiService.get(`processos/workflow/${getters.paramId}`)
       commit(`${WORKFLOW}/${SET_STEPS}`, processo.workflow)
     } catch(err) {
       throw err
@@ -75,7 +71,7 @@ const actions = {
 
     commit(START_LOADING)
     try {
-      await ApiService.put('processos', { _id: getters[`${PROCESSO}/id`], workflow: getters.workflow })
+      await ApiService.put('processos', { _id: getters.paramId, workflow: getters.workflow })
     } catch (err) {
       throw err
     } finally {
@@ -87,7 +83,7 @@ const actions = {
 
     commit(START_LOADING)
     try {
-      await ApiService.put('processos', { _id: getters[`${PROCESSO}/id`], workflow: getters.workflow })
+      await ApiService.put('processos', { _id: getters.paramId, workflow: getters.workflow })
     } catch (err) {
       throw err
     } finally {

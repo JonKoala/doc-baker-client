@@ -1,13 +1,14 @@
-import { SET_ANO, SET_ID, SET_NOME, SET_NUMERO, RESET_STATE } from 'store/mutation.types'
+import { SET_ANO, SET_ID, SET_NOME, SET_NUMERO, SET_REPRESENTANTE, SET_TIPO, RESET_STATE } from 'store/mutation.types'
 import { START_PROCESSO } from 'store/action.types'
-
 
 function getInitialState () {
   return {
     ano: null, // String
     id: null, // String
     nome: null, // String
-    numero: null // String
+    numero: null, // String
+    representante: null, // String
+    tipo: null // String
   }
 }
 const state = getInitialState
@@ -28,6 +29,12 @@ const getters = {
   },
   numero (state) {
     return state.numero
+  },
+  representante (state) {
+    return state.representante
+  },
+  tipo (state) {
+    return state.tipo
   }
 
 }
@@ -46,6 +53,12 @@ const mutations = {
   [SET_NUMERO] (state, numero) {
     state.numero = numero
   },
+  [SET_REPRESENTANTE] (state, representante) {
+    state.representante = representante
+  },
+  [SET_TIPO] (state, tipo) {
+    state.tipo = tipo
+  },
   [RESET_STATE] (state) {
     const initialState = getInitialState()
     Object.keys(initialState).forEach(key => { state[key] = initialState[key] })
@@ -60,6 +73,8 @@ const actions = {
     commit(SET_ID, processo.id)
     commit(SET_NOME, processo.nome)
     commit(SET_NUMERO, processo.numero)
+    commit(SET_REPRESENTANTE, processo.representante)
+    commit(SET_TIPO, processo.tipo)
   }
 
 }
