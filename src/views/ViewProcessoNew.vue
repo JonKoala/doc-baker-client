@@ -8,11 +8,11 @@
           </v-toolbar>
           <v-progress-linear v-bind:active="isLoading" class="my-0" color="blue" indeterminate></v-progress-linear>
           <v-layout row wrap justify-space-around class="pa-2">
-            <v-text-field v-model="processoNumero" v-bind:disabled="isLoading" label="Número" class="px-2"></v-text-field>
-            <v-text-field v-model="processoAno" v-bind:disabled="isLoading" label="Ano" class="px-2"></v-text-field>
+            <v-text-field v-model="numero" v-bind:disabled="isLoading" label="Número" class="px-2"></v-text-field>
+            <v-text-field v-model="ano" v-bind:disabled="isLoading" label="Ano" class="px-2"></v-text-field>
           </v-layout>
           <v-layout row wrap justify-space-around class="pa-2">
-            <v-text-field v-model="processoNome" v-bind:disabled="isNomeLocked || isLoading" label="Nome" class="pl-2"></v-text-field>
+            <v-text-field v-model="nome" v-bind:disabled="isNomeLocked || isLoading" label="Nome" class="pl-2"></v-text-field>
             <base-icon-button v-on:click="toggleNomeEditMode" v-bind:disabled="isLoading" v-bind:tooltip="nomeEditModeButtonTooltip" top class="pt-3 pr-4">
               {{ nomeEditModeButtonIcon }}
             </base-icon-button>
@@ -28,7 +28,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 
-import { VIEW_PROCESSO_NEW } from 'store/namespaces'
+import { VIEW_PROCESSO_NEW, PROCESSO } from 'store/namespaces'
 import { SAVE_PROCESSO, CHANGE_ANO, CHANGE_NOME, CHANGE_NUMERO, START_VIEW, TOGGLE_NOME_LOCKING } from 'store/action.types'
 
 import BaseIconButton from 'components/BaseIconButton'
@@ -46,23 +46,22 @@ export default {
   computed: {
     ...mapGetters(VIEW_PROCESSO_NEW, [
       'isLoading',
-      'isNomeLocked',
-      'processo'
+      'isNomeLocked'
     ]),
-    processoAno: {
-      get () { return this.processo.ano },
-      set (ano) { this.setAno(ano) }
+    numero: {
+      get () { return this.$store.getters[`${VIEW_PROCESSO_NEW}/${PROCESSO}/numero`] },
+      set (value) { this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${CHANGE_NUMERO}`, value) }
     },
-    processoNome: {
-      get () { return this.processo.nome },
-      set (nome) { this.setNome(nome) }
+    ano: {
+      get () {  return this.$store.getters[`${VIEW_PROCESSO_NEW}/${PROCESSO}/ano`] },
+      set (value) { this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${CHANGE_ANO}`, value) }
     },
-    processoNumero: {
-      get () { return this.processo.numero },
-      set (numero) { this.setNumero(numero) }
+    nome: {
+      get () {  return this.$store.getters[`${VIEW_PROCESSO_NEW}/${PROCESSO}/nome`] },
+      set (value) { this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${CHANGE_NOME}`, value) }
     },
     isSaveLocked () {
-      return !(this.processoAno && this.processoNome && this.processoNumero)
+      return !(this.ano && this.nome && this.numero)
     },
     nomeEditModeButtonIcon () {
       return (this.isNomeLocked) ? 'edit' : 'sync'
@@ -74,16 +73,13 @@ export default {
   methods: {
     ...mapActions(VIEW_PROCESSO_NEW, {
       persistProcesso: SAVE_PROCESSO,
-      setAno: CHANGE_ANO,
-      setNome: CHANGE_NOME,
-      setNumero: CHANGE_NUMERO,
       startView: START_VIEW,
       toggleNomeEditMode: TOGGLE_NOME_LOCKING
     }),
     async saveProcesso () {
       try {
         await this.persistProcesso()
-        this.$router.push({ name: 'editProcesso', params: { id: this.processo.id } })
+        this.$router.push({ name: 'editProcesso', params: { id: this.$store.getters[`${VIEW_PROCESSO_NEW}/${PROCESSO}/id`] } })
       } catch (err) {
         this.isNotifying = true
         console.log(err)

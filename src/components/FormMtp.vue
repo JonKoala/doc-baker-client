@@ -6,10 +6,10 @@
     <v-subheader>Dados do Processo</v-subheader>
     <v-layout row wrap class="pl-5">
       <v-flex xs2>
-        <v-select v-model="processoTipo" v-bind:items="listTipoProcesso" label="Tipo" box></v-select>
+        <v-select v-model="tipo" v-bind:items="listTipo" label="Tipo" box></v-select>
       </v-flex>
       <v-flex xs5>
-        <v-text-field v-model="processoRepresentante" label="Representante" box></v-text-field>
+        <v-text-field v-model="representante" label="Representante" box></v-text-field>
       </v-flex>
     </v-layout>
     <v-layout row wrap class="pl-5">
@@ -48,7 +48,7 @@
     <v-subheader>Dados da Manifestação Técnica</v-subheader>
     <v-layout row wrap class="pl-5">
       <v-flex xs12>
-        <v-combobox v-bind:value="computedAuditores" v-on:input="updateAuditores" v-bind:items="listAuditor" multiple hide-selected small-chips label="Auditores" box></v-combobox>
+        <v-combobox v-model="auditores" v-bind:items="listAuditor" multiple hide-selected small-chips label="Auditores" box></v-combobox>
       </v-flex>
     </v-layout>
 
@@ -69,10 +69,10 @@
     <v-subheader inset>Pressupostos</v-subheader>
     <v-layout row wrap class="pl-5">
       <v-flex xs3>
-        <v-checkbox v-model="pressupostoFumus" label="fumus boni iuris" class="italic-label" color="blue darken-2"></v-checkbox>
+        <v-checkbox v-model="fumusBoniIuris" label="fumus boni iuris" class="italic-label" color="blue darken-2"></v-checkbox>
       </v-flex>
       <v-flex xs4>
-        <v-select v-model="pressupostoPericulum" v-bind:items="listPericulum" label="periculum in mora " class="italic-label" box></v-select>
+        <v-select v-model="periculumInMora" v-bind:items="listPericulum" label="periculum in mora " class="italic-label" box></v-select>
       </v-flex>
     </v-layout>
 
@@ -95,7 +95,7 @@ export default {
   name: 'FormMtp',
   data () {
     return {
-      listTipoProcesso: [],
+      listTipo: [],
       listAuditor: [],
       listAdmissibilidade: [],
       listPericulum: []
@@ -105,48 +105,41 @@ export default {
     ...mapGetters(`${FORM_MTP}/${IRREGULARIDADES}`, {
       irregularidades: 'titulos'
     }),
-    ...mapGetters(`${FORM_MTP}/${MTP}`, [
-      'auditores',
-      'presenteFumus',
-      'presentePericulum',
-      'requisitosPresentes'
-    ]),
-    ...mapGetters(`${FORM_MTP}/${PROCESSO}`, [
-      'objetoCodigo',
-      'objetoDescricao',
-      'representante',
-      'tipo'
-    ]),
+    tipo: {
+      get () { return this.$store.getters[`${FORM_MTP}/${PROCESSO}/tipo`] },
+      set (value) { this.$store.commit(`${FORM_MTP}/${PROCESSO}/${SET_TIPO}`, value) }
+    },
+    representante: {
+      get () { return this.$store.getters[`${FORM_MTP}/${PROCESSO}/representante`] },
+      set (value) { this.$store.commit(`${FORM_MTP}/${PROCESSO}/${SET_REPRESENTANTE}`, value) }
+    },
     editalContrato: {
-      get () { return this.objetoCodigo },
-      set (editalContrato) { this.setEditalContrato(editalContrato) }
+      get () { return this.$store.getters[`${FORM_MTP}/${PROCESSO}/objetoCodigo`] },
+      set (value) { this.$store.commit(`${FORM_MTP}/${PROCESSO}/${SET_OBJETO_CODIGO}`, value) }
     },
     objeto: {
-      get () { return this.objetoDescricao },
-      set (objeto) { this.setObjeto(objeto) }
+      get () { return this.$store.getters[`${FORM_MTP}/${PROCESSO}/objetoDescricao`] },
+      set (value) { this.$store.commit(`${FORM_MTP}/${PROCESSO}/${SET_OBJETO_DESCRICAO}`, value) }
     },
-    pressupostoFumus: {
-      get () { return this.presenteFumus },
-      set (presente) { this.setPresenteFumus(presente) }
-    },
-    pressupostoPericulum: {
-      get () { return this.presentePericulum },
-      set (presente) { this.setPresentePericulum(presente) }
-    },
-    processoRepresentante: {
-      get () { return this.representante },
-      set (tipo) { this.setRepresentante(tipo) }
-    },
-    processoTipo: {
-      get () { return this.tipo },
-      set (tipo) { this.setTipoProcesso(tipo) }
+    auditores: {
+      get () { return this.listAuditor.filter(auditor => this.$store.getters[`${FORM_MTP}/${MTP}/auditores`].includes(auditor.value)) },
+      set (value) { this.$store.commit(`${FORM_MTP}/${MTP}/${SET_AUDITORES}`, value.map(auditor => auditor.value)) }
     },
     requisitosAdmissibilidade: {
-      get () { return this.requisitosPresentes },
-      set (requisitos) { this.setRequisitosPresentes(requisitos) }
+      get () { return this.$store.getters[`${FORM_MTP}/${MTP}/requisitosPresentes`] },
+      set (value) { this.$store.commit(`${FORM_MTP}/${MTP}/${SET_REQUISITOS_PRESENTES}`, value) }
     },
-    computedAuditores () {
-      return this.listAuditor.filter(auditor => this.auditores.includes(auditor.value))
+    fumusBoniIuris: {
+      get () { return this.$store.getters[`${FORM_MTP}/${MTP}/presenteFumus`] },
+      set (value) { this.$store.commit(`${FORM_MTP}/${MTP}/${SET_PRESENTE_FUMUS}`, value) }
+    },
+    fumusBoniIuris: {
+      get () { return this.$store.getters[`${FORM_MTP}/${MTP}/presenteFumus`] },
+      set (value) { this.$store.commit(`${FORM_MTP}/${MTP}/${SET_PRESENTE_FUMUS}`, value) }
+    },
+    periculumInMora: {
+      get () { return this.$store.getters[`${FORM_MTP}/${MTP}/presentePericulum`] },
+      set (value) { this.$store.commit(`${FORM_MTP}/${MTP}/${SET_PRESENTE_PERICULUM}`, value) }
     }
   },
   methods: {
@@ -157,25 +150,10 @@ export default {
       setIrregularidade: SET_IRREGULARIDADE_TITULO,
       addIrregularidade: PUSH_IRREGULARIDADE,
       removeIrregularidade: REMOVE_IRREGULARIDADE
-    }),
-    ...mapMutations(`${FORM_MTP}/${MTP}`, {
-      setAuditores: SET_AUDITORES,
-      setPresenteFumus: SET_PRESENTE_FUMUS,
-      setPresentePericulum: SET_PRESENTE_PERICULUM,
-      setRequisitosPresentes: SET_REQUISITOS_PRESENTES
-    }),
-    ...mapMutations(`${FORM_MTP}/${PROCESSO}`, {
-      setEditalContrato: SET_OBJETO_CODIGO,
-      setObjeto: SET_OBJETO_DESCRICAO,
-      setRepresentante: SET_REPRESENTANTE,
-      setTipoProcesso: SET_TIPO
-    }),
-    updateAuditores (auditores) {
-      this.setAuditores(auditores.map(auditor => auditor.value))
-    }
+    })
   },
   created () {
-    ApiService.get('/processos/tipo/options').then(response => this.listTipoProcesso = response)
+    ApiService.get('/processos/tipo/options').then(response => this.listTipo = response)
     ApiService.get('/auditores').then(response => {
       this.listAuditor = response.map(i => { return { text: i.nome, value: i._id } })
     })
