@@ -1,4 +1,4 @@
-import { SET_ANO, SET_ID, SET_NOME, SET_NUMERO, SET_REPRESENTANTE, SET_TIPO, RESET_STATE } from 'store/mutation.types'
+import { SET_ANO, SET_ID, SET_NOME, SET_NUMERO, SET_OBJETO_CODIGO, SET_OBJETO_DESCRICAO, SET_REPRESENTANTE, SET_TIPO, RESET_STATE } from 'store/mutation.types'
 import { START_PROCESSO } from 'store/action.types'
 
 function getInitialState () {
@@ -7,6 +7,10 @@ function getInitialState () {
     id: null, // String
     nome: null, // String
     numero: null, // String
+    objeto: {
+      codigo: null, // String
+      descricao: null // String
+    },
     representante: null, // String
     tipo: null // String
   }
@@ -29,6 +33,12 @@ const getters = {
   },
   numero (state) {
     return state.numero
+  },
+  objetoCodigo (state) {
+    return state.objeto.codigo
+  },
+  objetoDescricao (state) {
+    return state.objeto.descricao
   },
   representante (state) {
     return state.representante
@@ -53,6 +63,12 @@ const mutations = {
   [SET_NUMERO] (state, numero) {
     state.numero = numero
   },
+  [SET_OBJETO_CODIGO] (state, codigo) {
+    state.objeto.codigo = codigo
+  },
+  [SET_OBJETO_DESCRICAO] (state, descricao) {
+    state.objeto.descricao = descricao
+  },
   [SET_REPRESENTANTE] (state, representante) {
     state.representante = representante
   },
@@ -73,6 +89,8 @@ const actions = {
     commit(SET_ID, processo.id)
     commit(SET_NOME, processo.nome)
     commit(SET_NUMERO, processo.numero)
+    commit(SET_OBJETO_CODIGO, processo.objeto.codigo)
+    commit(SET_OBJETO_DESCRICAO, processo.objeto.descricao)
     commit(SET_REPRESENTANTE, processo.representante)
     commit(SET_TIPO, processo.tipo)
   }

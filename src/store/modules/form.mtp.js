@@ -1,9 +1,10 @@
 import ApiService from 'services/api.service'
 
 import irregularidades from 'store/modules/processo.irregularidades'
+import mtp from 'store/modules/processo.documento.mtp'
 import processo from 'store/modules/processo.geral'
 
-import { IRREGULARIDADES, PROCESSO } from 'store/namespaces'
+import { IRREGULARIDADES, MTP, PROCESSO } from 'store/namespaces'
 import { END_LOADING, START_LOADING, RESET_STATE } from 'store/mutation.types'
 import { START_IRREGULARIDADES, START_PROCESSO, START_VIEW } from 'store/action.types'
 
@@ -19,6 +20,7 @@ const state = getInitialState
 
 const modules = {
   [IRREGULARIDADES]: irregularidades,
+  [MTP]: mtp,
   [PROCESSO]: processo
 }
 
@@ -53,6 +55,7 @@ const actions = {
   async [START_VIEW] ({ commit, dispatch, getters }) {
     commit(RESET_STATE)
     commit(`${PROCESSO}/${RESET_STATE}`)
+    commit(`${MTP}/${RESET_STATE}`)
     commit(`${IRREGULARIDADES}/${RESET_STATE}`)
 
     commit(START_LOADING)

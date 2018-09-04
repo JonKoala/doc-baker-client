@@ -4,5 +4,6 @@ export const VIEW_PROCESSO_EDIT = 'edit'
 export const VIEW_PROCESSO_NEW = 'new'
 
 export const IRREGULARIDADES = 'processo/irregularidades'
+export const MTP = 'processo/documento/mtp'
 export const PROCESSO = 'processo/geral'
 export const WORKFLOW = 'processo/workflow'

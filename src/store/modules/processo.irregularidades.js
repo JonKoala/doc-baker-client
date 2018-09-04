@@ -1,10 +1,12 @@
+import Vue from 'vue'
+
 import { PUSH_IRREGULARIDADE, REMOVE_IRREGULARIDADE, SET_IRREGULARIDADE_TITULO, SET_IRREGULARIDADES, RESET_STATE } from 'store/mutation.types'
 import { START_IRREGULARIDADES } from 'store/action.types'
 
 
 function getInitialState () {
   return {
-    irregularidades: [] // [{ titulo: [STRING] }]
+    irregularidades: [{ titulo: null }]
   }
 }
 const state = getInitialState
@@ -41,7 +43,8 @@ const mutations = {
 const actions = {
 
   [START_IRREGULARIDADES] ({ commit }, irregularidades) {
-    commit(SET_IRREGULARIDADES, irregularidades)
+    if (irregularidades.length > 0)
+      commit(SET_IRREGULARIDADES, irregularidades)
   }
 
 }

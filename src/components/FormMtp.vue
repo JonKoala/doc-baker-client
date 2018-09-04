@@ -14,10 +14,10 @@
     </v-layout>
     <v-layout row wrap class="pl-5">
       <v-flex xs4>
-        <v-text-field label="Edital/Contrato" box></v-text-field>
+        <v-text-field v-model="editalContrato" label="Edital/Contrato" box></v-text-field>
       </v-flex>
       <v-flex xs10>
-        <v-text-field label="Objeto" box></v-text-field>
+        <v-text-field v-model="objeto" label="Objeto" box></v-text-field>
       </v-flex>
     </v-layout>
 
@@ -25,11 +25,12 @@
     <v-divider inset class="mt-1"></v-divider>
     <v-subheader inset>irregularidades</v-subheader>
     <v-layout row wrap class="pl-5">
-      <v-flex v-for="(irregularidade, index) in irregularidadesInput" v-bind:key="index" xs7>
+      <v-flex v-for="(irregularidade, index) in irregularidades" v-bind:key="index" xs7>
         <v-text-field
-          v-model="irregularidade.titulo"
+          v-bind:value="irregularidade"
+          v-on:input="setIrregularidade({ index, titulo: $event })"
           v-on:click:append="removeIrregularidade(index)"
-          v-bind:append-icon="(irregularidadesInput.length > 1) ? 'cancel' : null"
+          v-bind:append-icon="(irregularidades.length > 1) ? 'cancel' : null"
           label="Descrição da irregularidade" box
         ></v-text-field>
       </v-flex>
@@ -47,7 +48,7 @@
     <v-subheader>Dados da Manifestação Técnica</v-subheader>
     <v-layout row wrap class="pl-5">
       <v-flex xs12>
-        <v-combobox v-model="auditoresInput" v-bind:items="listAuditor" multiple hide-selected small-chips label="Auditores" box></v-combobox>
+        <v-combobox v-bind:value="computedAuditores" v-on:input="updateAuditores" v-bind:items="listAuditor" multiple hide-selected small-chips label="Auditores" box></v-combobox>
       </v-flex>
     </v-layout>
 
@@ -56,7 +57,7 @@
     <v-subheader inset>Requisitos de Admissibilidade</v-subheader>
     <v-layout column class="pl-5">
       <v-checkbox v-for="(admissibilidade, index) in listAdmissibilidade"
-        v-model="admissibilidadeInput"
+        v-model="requisitosAdmissibilidade"
         v-bind:label="admissibilidade.text"
         v-bind:value="admissibilidade.value"
         v-bind:key="index"
@@ -68,10 +69,10 @@
     <v-subheader inset>Pressupostos</v-subheader>
     <v-layout row wrap class="pl-5">
       <v-flex xs3>
-        <v-checkbox label="fumus boni iuris" class="italic-label" color="blue darken-2"></v-checkbox>
+        <v-checkbox v-model="pressupostoFumus" label="fumus boni iuris" class="italic-label" color="blue darken-2"></v-checkbox>
       </v-flex>
       <v-flex xs4>
-        <v-select v-bind:items="listPericulum" label="periculum in mora " class="italic-label" box></v-select>
+        <v-select v-model="pressupostoPericulum" v-bind:items="listPericulum" label="periculum in mora " class="italic-label" box></v-select>
       </v-flex>
     </v-layout>
 
@@ -83,30 +84,55 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 import ApiService from 'services/api.service'
 
-import { FORM_MTP, IRREGULARIDADES, PROCESSO } from 'store/namespaces'
+import { FORM_MTP, MTP, IRREGULARIDADES, PROCESSO } from 'store/namespaces'
 import { START_VIEW } from 'store/action.types'
-import { SET_REPRESENTANTE, SET_TIPO } from 'store/mutation.types'
+import {
+  PUSH_IRREGULARIDADE, REMOVE_IRREGULARIDADE, SET_AUDITORES, SET_PRESENTE_FUMUS, SET_PRESENTE_PERICULUM,
+  SET_IRREGULARIDADE_TITULO, SET_OBJETO_CODIGO, SET_OBJETO_DESCRICAO, SET_REPRESENTANTE, SET_REQUISITOS_PRESENTES, SET_TIPO
+} from 'store/mutation.types'
 
 export default {
   name: 'FormMtp',
   data () {
     return {
-
       listTipoProcesso: [],
       listAuditor: [],
       listAdmissibilidade: [],
-      listPericulum: [],
-
-      auditoresInput: [],
-      irregularidadesInput: [{ titulo: null }],
-      admissibilidadeInput: []
+      listPericulum: []
     }
   },
   computed: {
+    ...mapGetters(`${FORM_MTP}/${IRREGULARIDADES}`, {
+      irregularidades: 'titulos'
+    }),
+    ...mapGetters(`${FORM_MTP}/${MTP}`, [
+      'auditores',
+      'presenteFumus',
+      'presentePericulum',
+      'requisitosPresentes'
+    ]),
     ...mapGetters(`${FORM_MTP}/${PROCESSO}`, [
+      'objetoCodigo',
+      'objetoDescricao',
       'representante',
       'tipo'
     ]),
+    editalContrato: {
+      get () { return this.objetoCodigo },
+      set (editalContrato) { this.setEditalContrato(editalContrato) }
+    },
+    objeto: {
+      get () { return this.objetoDescricao },
+      set (objeto) { this.setObjeto(objeto) }
+    },
+    pressupostoFumus: {
+      get () { return this.presenteFumus },
+      set (presente) { this.setPresenteFumus(presente) }
+    },
+    pressupostoPericulum: {
+      get () { return this.presentePericulum },
+      set (presente) { this.setPresentePericulum(presente) }
+    },
     processoRepresentante: {
       get () { return this.representante },
       set (tipo) { this.setRepresentante(tipo) }
@@ -115,26 +141,37 @@ export default {
       get () { return this.tipo },
       set (tipo) { this.setTipoProcesso(tipo) }
     },
-    auditores () {
-      return this.auditoresInput.map(a => a.value)
+    requisitosAdmissibilidade: {
+      get () { return this.requisitosPresentes },
+      set (requisitos) { this.setRequisitosPresentes(requisitos) }
     },
-    irregularidades () {
-      return this.irregularidadesInput.map(i => i.value)
+    computedAuditores () {
+      return this.listAuditor.filter(auditor => this.auditores.includes(auditor.value))
     }
   },
   methods: {
     ...mapActions(FORM_MTP, {
       startView: START_VIEW,
     }),
+    ...mapMutations(`${FORM_MTP}/${IRREGULARIDADES}`, {
+      setIrregularidade: SET_IRREGULARIDADE_TITULO,
+      addIrregularidade: PUSH_IRREGULARIDADE,
+      removeIrregularidade: REMOVE_IRREGULARIDADE
+    }),
+    ...mapMutations(`${FORM_MTP}/${MTP}`, {
+      setAuditores: SET_AUDITORES,
+      setPresenteFumus: SET_PRESENTE_FUMUS,
+      setPresentePericulum: SET_PRESENTE_PERICULUM,
+      setRequisitosPresentes: SET_REQUISITOS_PRESENTES
+    }),
     ...mapMutations(`${FORM_MTP}/${PROCESSO}`, {
+      setEditalContrato: SET_OBJETO_CODIGO,
+      setObjeto: SET_OBJETO_DESCRICAO,
       setRepresentante: SET_REPRESENTANTE,
       setTipoProcesso: SET_TIPO
     }),
-    addIrregularidade () {
-      this.irregularidadesInput.push({ value: null })
-    },
-    removeIrregularidade (index) {
-      this.irregularidadesInput.splice(index, 1)
+    updateAuditores (auditores) {
+      this.setAuditores(auditores.map(auditor => auditor.value))
     }
   },
   created () {
