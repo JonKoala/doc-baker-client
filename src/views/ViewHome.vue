@@ -9,7 +9,7 @@
           <v-progress-linear v-show="isLoading" class="my-0" color="blue" indeterminate></v-progress-linear>
           <v-layout v-if="showResults" row justify-end class="pt-3 pb-5 pr-4">
             <v-flex xs4>
-              <v-text-field v-model="filter" append-icon="search" label="Busca" single-line hide-details></v-text-field>
+              <v-text-field v-model="search" append-icon="search" label="Busca" single-line hide-details></v-text-field>
             </v-flex>
           </v-layout>
           <v-data-table v-if="showResults" v-bind="{ headers, items, search }" hide-actions>
@@ -43,7 +43,7 @@
 
 <script>
 import Vue from 'vue'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import { START_VIEW, SELECT_PROCESSO } from 'store/action.types'
 import { SET_SEARCH } from 'store/mutation.types'
@@ -68,12 +68,11 @@ export default {
     ...mapGetters(VIEW_HOME, [
       'isLoading',
       'items',
-      'processo',
-      'search'
+      'processo'
     ]),
-    filter: {
-      get () { return this.search },
-      set (filter) { this.setFilter(filter) }
+    search: {
+      get () { return this.$store.getters[`${VIEW_HOME}/search`] },
+      set (value) { return this.$store.commit(`${VIEW_HOME}/${SET_SEARCH}`, value) }
     },
     headers () {
       return [
@@ -93,15 +92,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(VIEW_HOME, {
-      setFilter: SET_SEARCH
-    }),
-    ...mapActions(VIEW_HOME, {
-      selectItem: SELECT_PROCESSO,
-      startView: START_VIEW
-    }),
     async showDetails (item) {
-      this.selectItem(item)
+      this.$store.dispatch(`${VIEW_HOME}/${SELECT_PROCESSO}`, item)
       this.dialog = true
 
       await Vue.nextTick()
@@ -110,7 +102,7 @@ export default {
   },
   async created () {
     try {
-      await this.startView()
+      await this.$store.dispatch(`${VIEW_HOME}/${START_VIEW}`)
     } catch (err) {
       this.isError = true
       console.log(err)

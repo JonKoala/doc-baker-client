@@ -7,9 +7,9 @@
             <workflow-viewer v-bind:value="workflow" v-on:step-change="updateFormVisibility"></workflow-viewer>
             <v-layout justify-space-between class="px-3">
               <div>
-                <v-btn v-for="option in options.map(o => o.text)" v-bind:key="option" v-on:click="takeWorkflowAction(option)" >{{ option }}</v-btn>
+                <v-btn v-for="option in options.map(o => o.text)" v-bind:key="option" v-on:click="takeAction(option)" >{{ option }}</v-btn>
               </div>
-              <v-btn v-if="workflow.length > 1" v-on:click="undoWorkflowAction" >voltar</v-btn>
+              <v-btn v-if="workflow.length > 1" v-on:click="undoAction" >voltar</v-btn>
             </v-layout>
           </div>
         </v-card>
@@ -27,7 +27,7 @@
 
 <script>
 import Vue from 'vue'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import { FORM } from 'services/statemachine/state.type'
 import { VIEW_PROCESSO_EDIT } from 'store/namespaces'
@@ -54,21 +54,16 @@ export default {
     ])
   },
   methods: {
-    ...mapActions(VIEW_PROCESSO_EDIT, {
-      startView: START_VIEW,
-      takeAction: TAKE_ACTION,
-      undoAction: UNDO_ACTION
-    }),
     async scrollToBottom () {
       await Vue.nextTick()
       this.$refs.workflowContainer.$el.scrollTo(0, this.$refs.workflowContainer.$el.scrollHeight)
     },
-    async takeWorkflowAction (action) {
-      await this.takeAction(action)
+    async takeAction (action) {
+      await this.$store.dispatch(`${VIEW_PROCESSO_EDIT}/${TAKE_ACTION}`, action)
       this.scrollToBottom()
     },
-    async undoWorkflowAction () {
-      await this.undoAction()
+    async undoAction () {
+      await this.$store.dispatch(`${VIEW_PROCESSO_EDIT}/${UNDO_ACTION}`)
       this.scrollToBottom()
     },
     updateFormVisibility (step) {
@@ -76,7 +71,7 @@ export default {
     }
   },
   async mounted () {
-    await this.startView()
+    await this.$store.dispatch(`${VIEW_PROCESSO_EDIT}/${START_VIEW}`)
     this.scrollToBottom()
   }
 }
