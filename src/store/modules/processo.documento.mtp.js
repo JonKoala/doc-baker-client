@@ -16,6 +16,9 @@ const state = getInitialState
 
 const getters = {
 
+  state (state) {
+    return state
+  },
   auditores (state) {
     return state.auditores
   },
@@ -56,9 +59,11 @@ const actions = {
 
   [START_MTP] ({ commit }, mtp) {
     commit(SET_AUDITORES, mtp.auditores)
-    commit(SET_PRESENTE_FUMUS, mtp.pressupostos.presenteFumus)
-    commit(SET_PRESENTE_PERICULUM, mtp.pressupostos.presentePericulum)
     commit(SET_REQUISITOS_PRESENTES, mtp.requisitosPresentes)
+    if (mtp.pressupostos) {
+      commit(SET_PRESENTE_FUMUS, mtp.pressupostos.presenteFumus)
+      commit(SET_PRESENTE_PERICULUM, mtp.pressupostos.presentePericulum)
+    }
   }
 
 }

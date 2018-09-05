@@ -6,7 +6,7 @@ import processo from 'store/modules/processo.geral'
 
 import { IRREGULARIDADES, MTP, PROCESSO } from 'store/namespaces'
 import { END_LOADING, START_LOADING, RESET_STATE } from 'store/mutation.types'
-import { START_IRREGULARIDADES, START_PROCESSO, START_VIEW } from 'store/action.types'
+import { SAVE_MTP, START_IRREGULARIDADES, START_MTP, START_PROCESSO, START_VIEW } from 'store/action.types'
 
 
 function getInitialState () {
@@ -52,6 +52,30 @@ const mutations = {
 
 const actions = {
 
+  async [SAVE_MTP] ({ commit, dispatch, getters }) {
+    var { id, ...geral } = getters[`${PROCESSO}/state`]
+    var processo = {
+      ...geral,
+      ...getters[`${IRREGULARIDADES}/state`],
+      _id: id,
+      documento: {
+        mtp: getters[`${MTP}/state`]
+      }
+    }
+
+    commit(START_LOADING)
+    try {
+      var response = await ApiService.put('processos', processo)
+      processo = response.data
+      dispatch(`${PROCESSO}/${START_PROCESSO}`, { ...processo, id: processo._id })
+      dispatch(`${MTP}/${START_MTP}`, processo.documento.mtp)
+      dispatch(`${IRREGULARIDADES}/${START_IRREGULARIDADES}`, processo.irregularidades)
+    } catch (err) {
+      throw err
+    } finally {
+      commit(END_LOADING)
+    }
+  },
   async [START_VIEW] ({ commit, dispatch, getters }) {
     commit(RESET_STATE)
     commit(`${PROCESSO}/${RESET_STATE}`)
@@ -62,6 +86,7 @@ const actions = {
     try {
       var processo = await ApiService.get(`processos/${getters.paramId}`)
       dispatch(`${PROCESSO}/${START_PROCESSO}`, { ...processo, id: processo._id })
+      dispatch(`${MTP}/${START_MTP}`, processo.documento.mtp)
       dispatch(`${IRREGULARIDADES}/${START_IRREGULARIDADES}`, processo.irregularidades)
     } catch(err) {
       throw err

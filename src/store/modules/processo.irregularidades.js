@@ -13,6 +13,9 @@ const state = getInitialState
 
 const getters = {
 
+  state (state) {
+    return state
+  },
   titulos (state) {
     return state.irregularidades.map(i => i.titulo)
   }
