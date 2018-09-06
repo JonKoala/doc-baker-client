@@ -78,6 +78,7 @@
 
     <v-divider class="my-3"></v-divider>
     <v-layout justify-end row wrap class="pl-5">
+      <v-btn v-bind:href="bakingLink">GERAR DOC</v-btn>
       <v-btn v-on:click="saveForm" v-bind:disabled="isLoading" v-bind:loading="isLoading">SALVAR</v-btn>
     </v-layout>
 
@@ -113,6 +114,7 @@ export default {
   },
   computed: {
     ...mapGetters(`${FORM_MTP}`, [
+      'paramId',
       'isLoading'
     ]),
     ...mapGetters(`${FORM_MTP}/${IRREGULARIDADES}`, {
@@ -153,6 +155,9 @@ export default {
     periculumInMora: {
       get () { return this.$store.getters[`${FORM_MTP}/${MTP}/presentePericulum`] },
       set (value) { this.$store.commit(`${FORM_MTP}/${MTP}/${SET_PRESENTE_PERICULUM}`, value) }
+    },
+    bakingLink () {
+      return `${CONFIG.url.api}/bakery/bake?template=MTP&processo=${this.paramId}`
     }
   },
   methods: {
