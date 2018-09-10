@@ -8,16 +8,17 @@
       <v-flex xs2>
         <v-select v-model="tipo" v-bind:items="listTipo" label="Tipo" box></v-select>
       </v-flex>
-      <v-flex xs5>
-        <v-text-field v-model="representante" label="Representante" box></v-text-field>
-      </v-flex>
-    </v-layout>
-    <v-layout row wrap class="pl-5">
       <v-flex xs4>
-        <v-text-field v-model="editalContrato" label="Edital/Contrato" box></v-text-field>
+        <v-text-field v-model="editalContrato" hint="... o <b>[EDITAL/CONTRATO]</b> conteria os seguintes vícios ..." label="Edital/Contrato" box></v-text-field>
       </v-flex>
       <v-flex xs10>
-        <v-text-field v-model="objeto" label="Objeto" box></v-text-field>
+        <v-text-field v-model="objeto" hint="... o objeto refere-se a <b>[OBJETO]</b> ..." label="Objeto" box></v-text-field>
+      </v-flex>
+      <v-flex xs5>
+        <v-text-field v-model="representanteNome" hint="Trata-se de representação proposta por <b>[REPRESENTANTE]</b> ..." label="Representante" box></v-text-field>
+      </v-flex>
+      <v-flex xs2>
+        <v-select v-model="representanteIsPessoaFisica" v-bind:items="listTipoPessoa" label="Pessoa" box></v-select>
       </v-flex>
     </v-layout>
 
@@ -56,11 +57,11 @@
     <v-divider inset class="mt-1"></v-divider>
     <v-subheader inset>Requisitos de Admissibilidade</v-subheader>
     <v-layout column class="pl-5">
-      <v-checkbox v-for="(admissibilidade, index) in listAdmissibilidade"
+      <v-checkbox v-for="admissibilidade in filteredListAdmissibilidade"
         v-model="requisitosAdmissibilidade"
         v-bind:label="admissibilidade.text"
         v-bind:value="admissibilidade.value"
-        v-bind:key="index"
+        v-bind:key="admissibilidade.value"
         color="blue darken-2"></v-checkbox>
     </v-layout>
 
@@ -95,8 +96,8 @@ import ApiService from 'services/api.service'
 import { FORM_MTP, MTP, IRREGULARIDADES, PROCESSO } from 'store/namespaces'
 import { SAVE_MTP, START_VIEW } from 'store/action.types'
 import {
-  PUSH_IRREGULARIDADE, REMOVE_IRREGULARIDADE, SET_AUDITORES, SET_PRESENTE_FUMUS, SET_PRESENTE_PERICULUM,
-  SET_IRREGULARIDADE_TITULO, SET_OBJETO_CODIGO, SET_OBJETO_DESCRICAO, SET_REPRESENTANTE, SET_REQUISITOS_PRESENTES, SET_TIPO
+  PUSH_IRREGULARIDADE, REMOVE_IRREGULARIDADE, SET_AUDITORES, SET_PRESENTE_FUMUS, SET_PRESENTE_PERICULUM, SET_IRREGULARIDADE_TITULO,
+  SET_OBJETO_CODIGO, SET_OBJETO_DESCRICAO, SET_REPRESENTANTE_NOME, SET_REPRESENTANTE_PESSOA_FISICA, SET_REQUISITOS_PRESENTES, SET_TIPO
 } from 'store/mutation.types'
 
 export default {
@@ -104,6 +105,7 @@ export default {
   data () {
     return {
       listTipo: [],
+      listTipoPessoa: [{ text: 'Física', value: true }, { text: 'Jurídica', value: false }],
       listAuditor: [],
       listAdmissibilidade: [],
       listPericulum: [],
@@ -124,9 +126,13 @@ export default {
       get () { return this.$store.getters[`${FORM_MTP}/${PROCESSO}/tipo`] },
       set (value) { this.$store.commit(`${FORM_MTP}/${PROCESSO}/${SET_TIPO}`, value) }
     },
-    representante: {
-      get () { return this.$store.getters[`${FORM_MTP}/${PROCESSO}/representante`] },
-      set (value) { this.$store.commit(`${FORM_MTP}/${PROCESSO}/${SET_REPRESENTANTE}`, value) }
+    representanteNome: {
+      get () { return this.$store.getters[`${FORM_MTP}/${PROCESSO}/representanteNome`] },
+      set (value) { this.$store.commit(`${FORM_MTP}/${PROCESSO}/${SET_REPRESENTANTE_NOME}`, value) }
+    },
+    representanteIsPessoaFisica: {
+      get () { return this.$store.getters[`${FORM_MTP}/${PROCESSO}/representanteIsPessoaFisica`] },
+      set (value) { this.$store.commit(`${FORM_MTP}/${PROCESSO}/${SET_REPRESENTANTE_PESSOA_FISICA}`, value) }
     },
     editalContrato: {
       get () { return this.$store.getters[`${FORM_MTP}/${PROCESSO}/objetoCodigo`] },
@@ -158,6 +164,10 @@ export default {
     },
     bakingLink () {
       return `${CONFIG.url.api}/bakery/bake?template=MTP&processo=${this.paramId}`
+    },
+    filteredListAdmissibilidade () {
+      var incisoToIgnore = (this.representanteIsPessoaFisica) ? 'V' : 'IV'
+      return this.listAdmissibilidade.filter(a => a.inciso != incisoToIgnore)
     }
   },
   methods: {
@@ -186,7 +196,7 @@ export default {
       this.listAuditor = response.map(i => { return { text: i.nome, value: i._id } })
     })
     ApiService.get('/criterioslegais/admissibilidade').then(response => {
-      this.listAdmissibilidade = response.map(i => { return { text: i.descricao.presente, value: i._id } })
+      this.listAdmissibilidade = response.map(i => { return { text: i.inciso + ' - ' + i.descricao.presente, value: i._id, inciso: i.inciso } })
     })
     ApiService.get('/processos/periculum/options').then(response => this.listPericulum = response)
 
