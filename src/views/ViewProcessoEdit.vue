@@ -17,7 +17,7 @@
       <v-flex v-on:webkitTransitionEnd="scrollToBottom" v-on:transitionend="scrollToBottom" class="form" v-bind:class="{ 'showing': showingForm }">
         <v-card class="scrollable-container">
           <div class="scrollable-content">
-            <form-mtp></form-mtp>
+            <component v-bind:is="formToShow" ></component>
           </div>
         </v-card>
       </v-flex>
@@ -29,29 +29,31 @@
 import Vue from 'vue'
 import { mapGetters } from 'vuex'
 
-import { FORM } from 'services/statemachine/state.type'
 import { VIEW_PROCESSO_EDIT } from 'store/namespaces'
 import { START_VIEW, TAKE_ACTION, UNDO_ACTION } from 'store/action.types'
 
+import FormIti from 'components/FormIti'
 import FormMtp from 'components/FormMtp'
 import WorkflowViewer from 'components/WorkflowViewer'
 
 export default {
   name: 'ViewProcessoEdit',
   components: {
-    FormMtp,
     WorkflowViewer
   },
   data () {
     return {
-      showingForm: false
+      formToShow: null
     }
   },
   computed: {
     ...mapGetters(VIEW_PROCESSO_EDIT, [
       'workflow',
       'options'
-    ])
+    ]),
+    showingForm () {
+      return this.formToShow != null
+    }
   },
   methods: {
     async scrollToBottom () {
@@ -67,7 +69,18 @@ export default {
       this.scrollToBottom()
     },
     updateFormVisibility (step) {
-      this.showingForm = (step.type === FORM)
+
+      switch (step.state) {
+        case 'f-mt':
+          this.formToShow = FormMtp
+          break;
+        case 'f-iti':
+          this.formToShow = FormIti
+          break;
+        default:
+          this.formToShow = null
+          break;
+      }
     }
   },
   async mounted () {
