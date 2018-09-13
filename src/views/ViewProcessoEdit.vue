@@ -4,7 +4,7 @@
       <v-flex>
         <v-card ref="workflowContainer" class="scrollable-container">
           <div class="scrollable-content pb-3">
-            <workflow-viewer v-bind:value="workflow" v-on:step-change="updateFormVisibility"></workflow-viewer>
+            <workflow-viewer v-bind:value="workflow"></workflow-viewer>
             <v-layout justify-space-between class="px-3">
               <div>
                 <v-btn v-for="option in options.map(o => o.text)" v-bind:key="option" v-on:click="takeAction(option)" >{{ option }}</v-btn>
@@ -48,8 +48,9 @@ export default {
   },
   computed: {
     ...mapGetters(VIEW_PROCESSO_EDIT, [
+      'options',
       'workflow',
-      'options'
+      'workflowState'
     ]),
     showingForm () {
       return this.formToShow != null
@@ -62,16 +63,20 @@ export default {
     },
     async takeAction (action) {
       await this.$store.dispatch(`${VIEW_PROCESSO_EDIT}/${TAKE_ACTION}`, action)
+      this.updateFormVisibility()
       this.scrollToBottom()
     },
     async undoAction () {
       await this.$store.dispatch(`${VIEW_PROCESSO_EDIT}/${UNDO_ACTION}`)
+      this.updateFormVisibility()
       this.scrollToBottom()
     },
-    updateFormVisibility (step) {
+    updateFormVisibility () {
 
-      switch (step.state) {
-        case 'f-mt':
+      switch (this.workflowState) {
+        case 'f-mtp-1':
+        case 'f-mtp-2':
+        case 'f-mtp-3':
           this.formToShow = FormMtp
           break;
         case 'f-iti':
@@ -85,6 +90,7 @@ export default {
   },
   async mounted () {
     await this.$store.dispatch(`${VIEW_PROCESSO_EDIT}/${START_VIEW}`)
+    this.updateFormVisibility()
     this.scrollToBottom()
   }
 }

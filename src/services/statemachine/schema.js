@@ -24,7 +24,7 @@ export default {
       title: 'O relator já se manifestou sobre a admissibilidade da denuncia/representação?',
       actions: [
         { text: 'Sim', state: 'q-6' },
-        { text: 'Não', state: 'f-mt' }
+        { text: 'Não', state: 'f-mtp-3' }
       ]
     },
     'q-4': {
@@ -39,8 +39,8 @@ export default {
       type: QUESTION,
       title: 'O relator já se manifestou sobre a admissibilidade da denuncia/representação?',
       actions: [
-        { text: 'Sim', state: 'f-mt' },
-        { text: 'Não', state: 'f-mt' }
+        { text: 'Sim', state: 'f-mtp-2' },
+        { text: 'Não', state: 'f-mtp-1' }
       ]
     },
     'q-6': {
@@ -64,7 +64,7 @@ export default {
       title: 'O relator já se manifestou sobre a admissibilidade da denuncia/representação?',
       actions: [
         { text: 'Sim', state: 'q-6' },
-        { text: 'Não', state: 'f-mt' }
+        { text: 'Não', state: 'f-mtp-3' }
       ]
     },
     'q-9': {
@@ -116,9 +116,23 @@ export default {
       ]
     },
 
-    'f-mt': {
+    'f-mtp-1': {
       type: FORM,
-      title: 'Formulário MT',
+      title: 'Formulário MTP',
+      actions: [
+        { text: 'Homologado', state: 'q-6' }
+      ]
+    },
+    'f-mtp-2': {
+      type: FORM,
+      title: 'Formulário MTP',
+      actions: [
+        { text: 'Homologado', state: 'q-6' }
+      ]
+    },
+    'f-mtp-3': {
+      type: FORM,
+      title: 'Formulário MTP',
       actions: [
         { text: 'Homologado', state: 'q-6' }
       ]

@@ -54,28 +54,32 @@
     </v-layout>
 
     <!-- Dados da Manifestação Técnica - Requisitos de Admissibilidade -->
-    <v-divider inset class="mt-1"></v-divider>
-    <v-subheader inset>Requisitos de Admissibilidade</v-subheader>
-    <v-layout column class="pl-5">
-      <v-checkbox v-for="admissibilidade in filteredListAdmissibilidade"
-        v-model="requisitosAdmissibilidade"
-        v-bind:label="admissibilidade.text"
-        v-bind:value="admissibilidade.value"
-        v-bind:key="admissibilidade.value"
-        color="blue darken-2"></v-checkbox>
-    </v-layout>
+    <template v-if="showRequisitos">
+      <v-divider inset class="mt-1"></v-divider>
+      <v-subheader inset>Requisitos de Admissibilidade</v-subheader>
+      <v-layout column class="pl-5">
+        <v-checkbox v-for="admissibilidade in filteredListAdmissibilidade"
+          v-model="requisitosAdmissibilidade"
+          v-bind:label="admissibilidade.text"
+          v-bind:value="admissibilidade.value"
+          v-bind:key="admissibilidade.value"
+          color="blue darken-2"></v-checkbox>
+      </v-layout>
+    </template>
 
     <!-- Dados da Manifestação Técnica - Pressupostos -->
-    <v-divider inset class="mt-1"></v-divider>
-    <v-subheader inset>Pressupostos</v-subheader>
-    <v-layout row wrap class="pl-5">
-      <v-flex xs3>
-        <v-checkbox v-model="fumusBoniIuris" label="fumus boni iuris" class="italic-label" color="blue darken-2"></v-checkbox>
-      </v-flex>
-      <v-flex xs4>
-        <v-select v-model="periculumInMora" v-bind:items="listPericulum" label="periculum in mora " class="italic-label" box></v-select>
-      </v-flex>
-    </v-layout>
+    <template v-if="showPressupostos">
+      <v-divider inset class="mt-1"></v-divider>
+      <v-subheader inset>Pressupostos</v-subheader>
+      <v-layout row wrap class="pl-5">
+        <v-flex xs3>
+          <v-checkbox v-model="fumusBoniIuris" label="fumus boni iuris" class="italic-label" color="blue darken-2"></v-checkbox>
+        </v-flex>
+        <v-flex xs4>
+          <v-select v-model="periculumInMora" v-bind:items="listPericulum" label="periculum in mora " class="italic-label" box></v-select>
+        </v-flex>
+      </v-layout>
+    </template>
 
     <v-divider class="my-3"></v-divider>
     <v-layout justify-end row wrap class="pl-5">
@@ -117,6 +121,7 @@ export default {
   computed: {
     ...mapGetters(`${FORM_MTP}`, [
       'paramId',
+      'form',
       'isLoading'
     ]),
     ...mapGetters(`${FORM_MTP}/${IRREGULARIDADES}`, {
@@ -168,6 +173,12 @@ export default {
     filteredListAdmissibilidade () {
       var incisoToIgnore = (this.representanteIsPessoaFisica) ? 'V' : 'IV'
       return this.listAdmissibilidade.filter(a => a.inciso != incisoToIgnore)
+    },
+    showRequisitos () {
+      return ['f-mtp-1', 'f-mtp-3'].includes(this.form)
+    },
+    showPressupostos () {
+      return ['f-mtp-1', 'f-mtp-2'].includes(this.form)
     }
   },
   methods: {

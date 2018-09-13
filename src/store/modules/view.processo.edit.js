@@ -31,6 +31,10 @@ const getters = {
   },
   workflow (state, getters) {
     return getters[`${WORKFLOW}/steps`]
+  },
+  workflowState (state, getters) {
+    if (getters[`${WORKFLOW}/latestStep`])
+      return getters[`${WORKFLOW}/latestStep`].state
   }
 
 }
