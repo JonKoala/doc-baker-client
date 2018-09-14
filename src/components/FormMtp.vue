@@ -198,7 +198,6 @@ export default {
       } finally {
         this.isNotifying = true
       }
-
     }
   },
   created () {
@@ -207,7 +206,7 @@ export default {
       this.listAuditor = response.map(i => { return { text: i.nome, value: i._id } })
     })
     ApiService.get('/criterioslegais/admissibilidade').then(response => {
-      this.listAdmissibilidade = response.map(i => { return { text: i.inciso + ' - ' + i.descricao.presente, value: i._id, inciso: i.inciso } })
+      this.listAdmissibilidade = response.map(i => { return { text: i.inciso + ' - ' + i.descricao.generico, value: i._id, inciso: i.inciso } })
     })
     ApiService.get('/processos/periculum/options').then(response => this.listPericulum = response)
 
