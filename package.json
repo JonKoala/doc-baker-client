@@ -1,14 +1,13 @@
 {
-  "name": "doc-baker-client",
+  "name": "docbaker-client",
   "description": "",
   "version": "1.0.0",
   "author": "JonKoala <victor.santana.lemos@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "cross-env NODE_ENV=prod webpack --progress --hide-modules --config webpack.prod.js",
-    "dev": "cross-env NODE_ENV=dev webpack-dev-server --hot --config webpack.dev.js",
-    "start": "cross-env NODE_ENV=prod node ./server.js"
+    "build": "webpack --progress --hide-modules --config webpack.prod.js",
+    "dev": "webpack-dev-server --hot --config webpack.dev.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -29,6 +28,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-stage-3": "^6.24.1",
+    "compression-webpack-plugin": "^2.0.0",
     "config-webpack": "^1.0.4",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
@@ -38,7 +38,7 @@
     "webpack": "^4.16.4",
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.5",
+    "webpack-dev-server": "^3.1.14",
     "webpack-merge": "^4.1.4"
   }
 }

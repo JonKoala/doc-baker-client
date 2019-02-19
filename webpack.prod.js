@@ -1,11 +1,20 @@
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+const CompressionPlugin = require('compression-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const merge = require('webpack-merge')
+const path = require('path')
 
-const common = require('./webpack.common.js')
+const common = require('./webpack.common')
+
 
 module.exports = merge(common, {
   mode: 'production',
   plugins: [
-    new BundleAnalyzerPlugin.BundleAnalyzerPlugin()
+    new CompressionPlugin({
+      test: /\.js(\?.*)?$/i
+    }),
+    new HtmlWebpackPlugin({
+      template: 'index.html',
+      filename: '404.html'
+    })
   ]
 })

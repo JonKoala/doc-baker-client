@@ -168,7 +168,7 @@ export default {
       set (value) { this.$store.commit(`${FORM_MTP}/${MTP}/${SET_PRESENTE_PERICULUM}`, value) }
     },
     bakingLink () {
-      return `${CONFIG.url.api}/bakery/bake?template=MTP&processo=${this.paramId}`
+      return `${process.env['DOCBAKER_API_URL']}/bakery/bake?template=MTP&processo=${this.paramId}`
     },
     filteredListAdmissibilidade () {
       var incisoToIgnore = (this.representanteIsPessoaFisica) ? 'V' : 'IV'

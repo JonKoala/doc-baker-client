@@ -1,7 +1,7 @@
 const merge = require('webpack-merge')
-const config = require('config')
 
-const common = require('./webpack.common.js')
+const common = require('./webpack.common')
+
 
 module.exports = merge(common, {
   mode: 'development',
@@ -10,6 +10,10 @@ module.exports = merge(common, {
     historyApiFallback: true,
     noInfo: true,
     overlay: true,
-	  port: config.get('server.port')
+	  port: process.env['DOCBAKER_CLIENT_PORT'],
+    host: '0.0.0.0'
   },
+  watchOptions: {
+    poll: true
+  }
 })

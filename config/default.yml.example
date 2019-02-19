@@ -1,5 +1,0 @@
-api:
-  url: '[API-URL]'
-
-server:
-  port: '[CLIENT-SERVER-PORT]'

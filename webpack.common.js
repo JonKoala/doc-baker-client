@@ -1,7 +1,7 @@
-const ConfigWebpackPlugin = require("config-webpack")
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const webpack = require('webpack')
 
 
 module.exports = {
@@ -37,10 +37,14 @@ module.exports = {
     extensions: ['*', '.js', '.vue', '.json']
   },
   plugins: [
-    new ConfigWebpackPlugin(),
     new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       template: 'index.html'
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'DOCBAKER_API_URL': JSON.stringify(process.env['DOCBAKER_API_URL'])
+      }
     })
   ]
 }
