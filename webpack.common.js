@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const webpack = require('webpack')
 
 
@@ -15,13 +16,17 @@ module.exports = {
         use: ['vue-style-loader', 'css-loader']
       },
       {
-        test: /\.vue$/,
-        loader: 'vue-loader'
-      },
-      {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/
+      },
+      {
+        test: /\.styl$/,
+        loader: ['style-loader', 'css-loader', 'stylus-loader']
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
       }
     ]
   },
@@ -37,10 +42,11 @@ module.exports = {
     extensions: ['*', '.js', '.vue', '.json']
   },
   plugins: [
-    new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       template: 'index.html'
     }),
+    new VueLoaderPlugin(),
+    new VuetifyLoaderPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         'DOCBAKER_API_URL': JSON.stringify(process.env['DOCBAKER_API_URL'])

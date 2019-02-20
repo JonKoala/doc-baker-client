@@ -1,8 +1,8 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify'
+import Vuetify from 'vuetify/lib'
 import { sync } from 'vuex-router-sync'
 
-import 'vuetify/dist/vuetify.css'
+import 'vuetify/src/stylus/app.styl'
 
 import App from './App'
 import router from './router'
