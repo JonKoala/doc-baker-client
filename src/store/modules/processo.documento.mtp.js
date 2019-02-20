@@ -7,7 +7,7 @@ function getInitialState () {
     auditores: [], // Strings
     pressupostos: {
       presenteFumus: false,
-      presentePericulum: null // String
+      presentePericulum: 'NÃO'
     },
     requisitosPresentes: [] // Strings
   }

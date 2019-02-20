@@ -6,13 +6,22 @@ import processo from 'store/modules/processo.geral'
 import workflow from 'store/modules/processo.workflow'
 
 import { IRREGULARIDADES, MTP, PROCESSO, WORKFLOW } from 'store/namespaces'
-import { END_LOADING, SET_STEPS, START_LOADING, RESET_STATE } from 'store/mutation.types'
+import {
+  END_LOADING, SET_ADMISSIBILIDADE_OPTIONS, SET_AUDITOR_OPTIONS,
+  SET_PERICULUM_OPTIONS, SET_STEPS, SET_TIPO_OPTIONS, START_LOADING, RESET_STATE
+} from 'store/mutation.types'
 import { SAVE_MTP, START_IRREGULARIDADES, START_MTP, START_PROCESSO, START_VIEW } from 'store/action.types'
 
 
 function getInitialState () {
   return {
-    isLoading: false
+    isLoading: false,
+    options: {
+      admissibilidade: [],
+      auditor: [],
+      periculum: [],
+      tipo: []
+    }
   }
 }
 const state = getInitialState
@@ -35,6 +44,9 @@ const getters = {
   },
   isLoading (state) {
     return state.isLoading
+  },
+  options (state) {
+    return state.options
   }
 
 }
@@ -43,6 +55,18 @@ const mutations = {
 
   [END_LOADING] (state) {
     state.isLoading = false
+  },
+  [SET_ADMISSIBILIDADE_OPTIONS] (state, options) {
+    state.options.admissibilidade = options
+  },
+  [SET_AUDITOR_OPTIONS] (state, options) {
+    state.options.auditor = options
+  },
+  [SET_PERICULUM_OPTIONS] (state, options) {
+    state.options.periculum = options
+  },
+  [SET_TIPO_OPTIONS] (state, options) {
+    state.options.tipo = options
   },
   [START_LOADING] (state) {
     state.isLoading = true
@@ -89,11 +113,18 @@ const actions = {
 
     commit(START_LOADING)
     try {
-      var processo = await ApiService.get(`processos/${getters.paramId}`)
-      dispatch(`${PROCESSO}/${START_PROCESSO}`, { ...processo, id: processo._id })
-      dispatch(`${MTP}/${START_MTP}`, processo.documento.mtp)
-      dispatch(`${IRREGULARIDADES}/${START_IRREGULARIDADES}`, processo.irregularidades)
-      commit(`${WORKFLOW}/${SET_STEPS}`, processo.workflow)
+      await Promise.all([
+        ApiService.get('/criterioslegais/admissibilidade').then(result => commit(SET_ADMISSIBILIDADE_OPTIONS, result)),
+        ApiService.get('/auditores').then(result => commit(SET_AUDITOR_OPTIONS, result)),
+        ApiService.get('/processos/periculum/options').then(result => commit(SET_PERICULUM_OPTIONS, result)),
+        ApiService.get('/processos/tipo/options').then(result => commit(SET_TIPO_OPTIONS, result)),
+        ApiService.get(`processos/${getters.paramId}`).then(processo => {
+          dispatch(`${PROCESSO}/${START_PROCESSO}`, { ...processo, id: processo._id })
+          dispatch(`${MTP}/${START_MTP}`, processo.documento.mtp)
+          dispatch(`${IRREGULARIDADES}/${START_IRREGULARIDADES}`, processo.irregularidades)
+          commit(`${WORKFLOW}/${SET_STEPS}`, processo.workflow)
+        })
+      ])
     } catch(err) {
       throw err
     } finally {

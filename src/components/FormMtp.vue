@@ -6,19 +6,21 @@
     <v-subheader>Dados do Processo</v-subheader>
     <v-layout row wrap class="pl-5">
       <v-flex xs2>
-        <v-select v-model="tipo" v-bind:items="listTipo" label="Tipo" box></v-select>
+        <v-select v-model="tipo" v-bind:items="options.tipo" label="Tipo" box></v-select>
       </v-flex>
       <v-flex xs4>
-        <v-text-field v-model="editalContrato" hint="... o <b>[EDITAL/CONTRATO]</b> conteria os seguintes vícios ..." label="Edital/Contrato" box></v-text-field>
+        <v-text-field v-model="editalContrato" hint="... o <b>[EDITAL/CONTRATO]</b> conteria os seguintes vícios ..." label="Edital/Contrato" box>
+        </v-text-field>
       </v-flex>
       <v-flex xs10>
         <v-text-field v-model="objeto" hint="... o objeto refere-se a <b>[OBJETO]</b> ..." label="Objeto" box></v-text-field>
       </v-flex>
       <v-flex xs5>
-        <v-text-field v-model="representanteNome" hint="Trata-se de representação proposta por <b>[REPRESENTANTE]</b> ..." label="Representante" box></v-text-field>
+        <v-text-field v-model="representanteNome" hint="Trata-se de representação proposta por <b>[REPRESENTANTE]</b> ..." label="Representante" box>
+        </v-text-field>
       </v-flex>
       <v-flex xs2>
-        <v-select v-model="representanteIsPessoaFisica" v-bind:items="listTipoPessoa" label="Pessoa" box></v-select>
+        <v-select v-model="representanteIsPessoaFisica" v-bind:items="tipoPessoaOptions" label="Pessoa" box></v-select>
       </v-flex>
     </v-layout>
 
@@ -49,7 +51,7 @@
     <v-subheader>Dados da Manifestação Técnica</v-subheader>
     <v-layout row wrap class="pl-5">
       <v-flex xs12>
-        <v-combobox v-model="auditores" v-bind:items="listAuditor" multiple hide-selected small-chips label="Auditores" box></v-combobox>
+        <v-combobox v-model="auditores" v-bind:items="auditorOptions" multiple hide-selected small-chips label="Auditores" box></v-combobox>
       </v-flex>
     </v-layout>
 
@@ -58,7 +60,7 @@
       <v-divider inset class="mt-1"></v-divider>
       <v-subheader inset>Requisitos de Admissibilidade</v-subheader>
       <v-layout column class="pl-5">
-        <v-checkbox v-for="admissibilidade in filteredListAdmissibilidade"
+        <v-checkbox v-for="admissibilidade in admissibilidadeOptions"
           v-model="requisitosAdmissibilidade"
           v-bind:label="admissibilidade.text"
           v-bind:value="admissibilidade.value"
@@ -76,7 +78,7 @@
           <v-checkbox v-model="fumusBoniIuris" label="fumus boni iuris" class="italic-label" color="blue darken-2"></v-checkbox>
         </v-flex>
         <v-flex xs4>
-          <v-select v-model="periculumInMora" v-bind:items="listPericulum" label="periculum in mora " class="italic-label" box></v-select>
+          <v-select v-model="periculumInMora" v-bind:items="options.periculum" label="periculum in mora" class="italic-label" box></v-select>
         </v-flex>
       </v-layout>
     </template>
@@ -95,8 +97,6 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 
-import ApiService from 'services/api.service'
-
 import { FORM_MTP, MTP, IRREGULARIDADES, PROCESSO } from 'store/namespaces'
 import { SAVE_MTP, START_VIEW } from 'store/action.types'
 import {
@@ -108,12 +108,6 @@ export default {
   name: 'FormMtp',
   data () {
     return {
-      listTipo: [],
-      listTipoPessoa: [{ text: 'Física', value: true }, { text: 'Jurídica', value: false }],
-      listAuditor: [],
-      listAdmissibilidade: [],
-      listPericulum: [],
-
       isNotifying: false,
       noteMessage: null
     }
@@ -122,7 +116,8 @@ export default {
     ...mapGetters(`${FORM_MTP}`, [
       'paramId',
       'form',
-      'isLoading'
+      'isLoading',
+      'options'
     ]),
     ...mapGetters(`${FORM_MTP}/${IRREGULARIDADES}`, {
       irregularidades: 'titulos'
@@ -148,7 +143,7 @@ export default {
       set (value) { this.$store.commit(`${FORM_MTP}/${PROCESSO}/${SET_OBJETO_DESCRICAO}`, value) }
     },
     auditores: {
-      get () { return this.listAuditor.filter(auditor => this.$store.getters[`${FORM_MTP}/${MTP}/auditores`].includes(auditor.value)) },
+      get () { return this.auditorOptions.filter(auditor => this.$store.getters[`${FORM_MTP}/${MTP}/auditores`].includes(auditor.value)) },
       set (value) { this.$store.commit(`${FORM_MTP}/${MTP}/${SET_AUDITORES}`, value.map(auditor => auditor.value)) }
     },
     requisitosAdmissibilidade: {
@@ -167,18 +162,28 @@ export default {
       get () { return this.$store.getters[`${FORM_MTP}/${MTP}/presentePericulum`] },
       set (value) { this.$store.commit(`${FORM_MTP}/${MTP}/${SET_PRESENTE_PERICULUM}`, value) }
     },
+    admissibilidadeOptions () {
+      var incisoToIgnore = (this.representanteIsPessoaFisica) ? 'V' : 'IV'
+      return this.options.admissibilidade
+      .filter(a => a.inciso != incisoToIgnore)
+      .map(a => {
+        return { text: a.inciso + ' - ' + a.descricao.generico, value: a._id }
+      })
+    },
+    auditorOptions () {
+      return this.options.auditor.map(auditor => { return { text: auditor.nome, value: auditor._id } })
+    },
     bakingLink () {
       return `${process.env['DOCBAKER_API_URL']}/bakery/bake?template=MTP&processo=${this.paramId}`
-    },
-    filteredListAdmissibilidade () {
-      var incisoToIgnore = (this.representanteIsPessoaFisica) ? 'V' : 'IV'
-      return this.listAdmissibilidade.filter(a => a.inciso != incisoToIgnore)
     },
     showRequisitos () {
       return ['f-mtp-1', 'f-mtp-3'].includes(this.form)
     },
     showPressupostos () {
       return ['f-mtp-1', 'f-mtp-2'].includes(this.form)
+    },
+    tipoPessoaOptions () {
+      return [{ text: 'Física', value: true }, { text: 'Jurídica', value: false }]
     }
   },
   methods: {
@@ -188,7 +193,6 @@ export default {
       removeIrregularidade: REMOVE_IRREGULARIDADE
     }),
     async saveForm () {
-
       try {
         this.$store.dispatch(`${FORM_MTP}/${SAVE_MTP}`)
         this.noteMessage = 'Formulário salvo com sucesso!'
@@ -201,15 +205,6 @@ export default {
     }
   },
   created () {
-    ApiService.get('/processos/tipo/options').then(response => this.listTipo = response)
-    ApiService.get('/auditores').then(response => {
-      this.listAuditor = response.map(i => { return { text: i.nome, value: i._id } })
-    })
-    ApiService.get('/criterioslegais/admissibilidade').then(response => {
-      this.listAdmissibilidade = response.map(i => { return { text: i.inciso + ' - ' + i.descricao.generico, value: i._id, inciso: i.inciso } })
-    })
-    ApiService.get('/processos/periculum/options').then(response => this.listPericulum = response)
-
     this.$store.dispatch(`${FORM_MTP}/${START_VIEW}`)
   }
 }
