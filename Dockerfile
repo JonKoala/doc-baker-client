@@ -17,6 +17,3 @@ COPY . .
 RUN dos2unix docker-entrypoint.sh
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["sh", "docker-entrypoint.sh"]
-
-ARG DOCBAKER_CLIENT_PORT
-EXPOSE $DOCBAKER_CLIENT_PORT
