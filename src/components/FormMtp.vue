@@ -85,7 +85,7 @@
 
     <v-divider class="my-3"></v-divider>
     <v-layout justify-end row wrap class="pl-5">
-      <v-btn v-bind:href="bakingLink">GERAR DOC</v-btn>
+      <v-btn v-on:click="createDoc" v-bind:disabled="isLoading" v-bind:loading="isLoading">GERAR DOC</v-btn>
       <v-btn v-on:click="saveForm" v-bind:disabled="isLoading" v-bind:loading="isLoading">SALVAR</v-btn>
     </v-layout>
 
@@ -192,17 +192,26 @@ export default {
       addIrregularidade: PUSH_IRREGULARIDADE,
       removeIrregularidade: REMOVE_IRREGULARIDADE
     }),
-    async saveForm () {
-      try {
-        this.$store.dispatch(`${FORM_MTP}/${SAVE_MTP}`)
+    async createDoc () {
+        if (await this.saveData())
+          window.location.href = this.bakingLink
+    },
+    saveData () {
+      return this.$store.dispatch(`${FORM_MTP}/${SAVE_MTP}`)
+      .then(() => {
         this.noteMessage = 'Formulário salvo com sucesso!'
-      } catch (err) {
+        return true
+      }).catch(err => {
         this.noteMessage = 'Ocorreu um erro ao tentar salvar o processo'
-        console.log(err)
-      } finally {
+        console.log(`${err.response.data.type}: ${err.response.data.message}`)
+        return false
+      }).finally(() => {
         this.isNotifying = true
-      }
-    }
+      })
+    },
+    saveForm () {
+      this.saveData()
+    },
   },
   created () {
     this.$store.dispatch(`${FORM_MTP}/${START_VIEW}`)
