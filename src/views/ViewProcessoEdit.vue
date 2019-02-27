@@ -33,6 +33,7 @@ import { VIEW_PROCESSO_EDIT } from 'store/namespaces'
 import { START_VIEW, TAKE_ACTION, UNDO_ACTION } from 'store/action.types'
 
 import FormIti from 'components/FormIti'
+import FormMt from 'components/FormMt'
 import FormMtp from 'components/FormMtp'
 import WorkflowViewer from 'components/WorkflowViewer'
 
@@ -79,6 +80,9 @@ export default {
         case 'f-mtp-3':
           this.formToShow = FormMtp
           break;
+        case 'f-mt':
+          this.formToShow = FormMt
+          break
         case 'f-iti':
           this.formToShow = FormIti
           break;

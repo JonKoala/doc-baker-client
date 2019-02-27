@@ -111,8 +111,8 @@ export default {
       type: QUESTION,
       title: 'Entre os responsáveis existem chefes dos poderes estaduais?',
       actions: [
-        { text: 'Sim', state: 'f-iti' },
-        { text: 'Não', state: 'f-iti' }
+        { text: 'Sim', state: 'f-mt' },
+        { text: 'Não', state: 'f-mt' }
       ]
     },
 
@@ -135,6 +135,13 @@ export default {
       title: 'Formulário MTP',
       actions: [
         { text: 'Homologado', state: 'q-6' }
+      ]
+    },
+    'f-mt': {
+      type: FORM,
+      title: 'Formulário MT',
+      actions: [
+        { text: 'Homologado', state: 'f-iti' }
       ]
     },
     'f-iti': {
