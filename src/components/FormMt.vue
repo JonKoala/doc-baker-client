@@ -19,18 +19,10 @@
           <v-subheader>{{ index+1 }}ª Irregularidade</v-subheader>
         </div>
         <v-layout row wrap class="pl-5">
-          <v-flex xs7>
-            <v-text-field label="Título" box></v-text-field>
-          </v-flex>
-          <v-tooltip top>
-            <v-btn v-on:click="removeIrregularidade(index)" fab dark slot="activator" color="red">
-              <v-icon dark>remove</v-icon>
-            </v-btn>
-            <span>Remover Irregularidade</span>
-          </v-tooltip>
-          <v-flex xs12>
-            <v-textarea label="Base Legal" box auto-grow rows="1"></v-textarea>
-          </v-flex>
+          <v-flex xs7><v-text-field label="Título" box></v-text-field></v-flex>
+          <base-icon-button v-on:click="removeIrregularidade(index)" slot="activator"
+          tooltip="Remover Irregularidade" color="red" class="ma-2 mt-1" top fab dark small>remove</base-icon-button>
+          <v-flex xs12><v-textarea label="Base Legal" box auto-grow rows="1"></v-textarea></v-flex>
 
           <!-- reponsaveis -->
           <v-expansion-panel expand class="elevation-0">
@@ -40,13 +32,10 @@
                 <v-subheader>{{ responsavelIndex+1 }}° Responsável</v-subheader>
               </div>
               <v-layout row wrap class="pl-5">
-                <v-flex xs7 class="pa-0"><v-text-field label="Responsável" box></v-text-field></v-flex>
-                <v-tooltip top>
-                  <v-btn v-on:click="removeResponsavel(index, responsavelIndex)" fab dark slot="activator" color="red">
-                    <v-icon dark>remove</v-icon>
-                  </v-btn>
-                  <span>Remover Responsável</span>
-                </v-tooltip>
+                <v-flex xs7><v-text-field label="Responsável" box></v-text-field></v-flex>
+                <base-icon-button v-on:click="removeResponsavel(index, responsavelIndex)" slot="activator"
+                tooltip="Remover Responsável" color="red" class="ma-2" top fab dark small>remove</base-icon-button>
+
                 <v-flex xs12><v-textarea label="Conduta" box auto-grow rows="1"></v-textarea></v-flex>
                 <v-flex xs12><v-textarea label="Nexo" box auto-grow rows="1"></v-textarea></v-flex>
                 <v-flex xs12><v-textarea label="Culpabilidade" box auto-grow rows="1"></v-textarea></v-flex>
@@ -54,33 +43,31 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
 
-          <v-tooltip top>
-            <v-btn v-on:click="addResponsavel(index)" fab dark slot="activator" color="blue">
-              <v-icon dark>add</v-icon>
-            </v-btn>
-            <span>Adicionar Responsável</span>
-          </v-tooltip>
+          <base-icon-button v-on:click="addResponsavel(index)" slot="activator" tooltip="Adicionar Responsável" color="blue" top fab dark>add</base-icon-button>
 
         </v-layout>
       </v-expansion-panel-content>
 
     </v-expansion-panel>
 
-    <v-tooltip top>
-      <v-btn v-on:click="addIrregularidade" fab dark slot="activator" color="indigo">
-        <v-icon dark>add</v-icon>
-      </v-btn>
-      <span>Adicionar Irregularidade</span>
-    </v-tooltip>
+    <base-icon-button v-on:click="addIrregularidade" slot="activator" tooltip="Adicionar Irregularidade" color="indigo" top fab dark>add</base-icon-button>
 
+    <base-confirm-dialog ref="confirm"></base-confirm-dialog>
   </v-container>
 </template>
 
 <script>
 import Vue from 'vue'
 
+import BaseConfirmDialog from 'components/BaseConfirmDialog'
+import BaseIconButton from 'components/BaseIconButton'
+
 export default {
-  name: 'FormIti',
+  name: 'FormMt',
+  components: {
+    BaseConfirmDialog,
+    BaseIconButton
+  },
   data () {
     return {
       irregularidades: [{ responsaveis: [] }]
@@ -93,11 +80,13 @@ export default {
     addResponsavel (index) {
       this.irregularidades[index].responsaveis.push({ })
     },
-    removeIrregularidade (index) {
-      this.irregularidades.splice(index, 1)
+    async removeIrregularidade (index) {
+      if (await this.$refs.confirm.open('Remover Irregularidade', 'Tem certeza de que deseja remover esta irregularidade?', { color: 'red' }))
+        this.irregularidades.splice(index, 1)
     },
-    removeResponsavel (index, responsavelIndex) {
-      this.irregularidades[index].responsaveis.splice(responsavelIndex, 1)
+    async removeResponsavel (index, responsavelIndex) {
+      if (await this.$refs.confirm.open('Remover Responsável', 'Tem certeza de que deseja remover este responsável?', { color: 'red' }))
+        this.irregularidades[index].responsaveis.splice(responsavelIndex, 1)
     }
   }
 }
