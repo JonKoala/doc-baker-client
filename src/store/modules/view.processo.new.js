@@ -1,17 +1,25 @@
 import ApiService from 'services/api.service'
 import stateMachine from 'services/statemachine.service'
 
-import processo from 'store/modules/processo.geral'
+import processo from 'store/modules/processo'
 
 import { PROCESSO } from 'store/namespaces'
-import { END_LOADING, SET_ANO, SET_ID, SET_NOME, SET_NOME_LOCKING, SET_NUMERO, START_LOADING, RESET_STATE } from 'store/mutation.types'
+import {
+  UPDATE_FIELD, END_LOADING, SET_ANO, SET_ID, SET_NOME,
+  SET_NOME_LOCKING, SET_NUMERO, SET_OPTIONS, START_LOADING, RESET_STATE
+} from 'store/mutation.types'
 import { AUTO_CHANGE_NOME, SAVE_PROCESSO, START_PROCESSO, CHANGE_ANO, CHANGE_NOME, CHANGE_NUMERO, START_VIEW, TOGGLE_NOME_LOCKING } from 'store/action.types'
 
 
 function getInitialState () {
   return {
     isLoading: false,
-    isNomeLocked: true
+    isNomeLocked: true,
+    selectOptions: {
+      objetoTipos: [],
+      processoTipos: [],
+      representanteTipos: [{ text: 'Jurídica', value: false }, { text: 'Física', value: true }]
+    }
   }
 }
 const state = getInitialState
@@ -28,8 +36,11 @@ const getters = {
   isNomeLocked (state) {
     return state.isNomeLocked
   },
-  processo (state, getters) {
-    return getters[`${PROCESSO}/state`]
+  processoField (state, getters) {
+    return getters[`${PROCESSO}/getField`]
+  },
+  selectOptions (state) {
+    return state.selectOptions
   }
 
 }
@@ -41,6 +52,9 @@ const mutations = {
   },
   [SET_NOME_LOCKING] (state, isLocking) {
     state.isNomeLocked = isLocking
+  },
+  [SET_OPTIONS] (state, payload) {
+    state.selectOptions[payload.path] = payload.value
   },
   [START_LOADING] (state) {
     state.isLoading = true
@@ -55,8 +69,8 @@ const mutations = {
 const actions = {
 
   [AUTO_CHANGE_NOME] ({ dispatch, getters }) {
-    if (getters.processo.numero && getters.processo.ano)
-      dispatch(CHANGE_NOME, `${getters.processo.numero}/${getters.processo.ano}`)
+    if (getters.processoField('numero') && getters.processoField('ano'))
+      dispatch(CHANGE_NOME, `${getters.processoField('numero')}/${getters.processoField('ano')}`)
     else
       dispatch(CHANGE_NOME, null)
   },
@@ -64,7 +78,7 @@ const actions = {
 
     commit(START_LOADING)
     try {
-      var response = await ApiService.post('processos', { ...getters.processo, workflow: stateMachine.getFreshWorkflow() })
+      var response = await ApiService.post('processos', { ...getters[`${PROCESSO}/clone`], workflow: stateMachine.getFreshWorkflow() })
       await dispatch(`${PROCESSO}/${START_PROCESSO}`, { ...response.data, id: response.data._id })
     } catch (err) {
       throw err
@@ -73,22 +87,34 @@ const actions = {
     }
   },
   [CHANGE_ANO] ({ dispatch, commit, getters }, ano) {
-    commit(`${PROCESSO}/${SET_ANO}`, ano)
+    commit(`${PROCESSO}/${UPDATE_FIELD}`, { path: 'ano', value: ano })
     if (getters.isNomeLocked)
       dispatch(AUTO_CHANGE_NOME)
   },
   [CHANGE_NOME] ({ commit }, nome) {
-    commit(`${PROCESSO}/${SET_NOME}`, nome)
+    commit(`${PROCESSO}/${UPDATE_FIELD}`, { path: 'nome', value: nome })
   },
   [CHANGE_NUMERO] ({ dispatch, commit, getters }, numero) {
-    commit(`${PROCESSO}/${SET_NUMERO}`, numero)
+    commit(`${PROCESSO}/${UPDATE_FIELD}`, { path: 'numero', value: numero })
     if (getters.isNomeLocked)
       dispatch(AUTO_CHANGE_NOME)
   },
-  [START_VIEW] ({ commit, dispatch }) {
+  async [START_VIEW] ({ commit, dispatch }) {
     commit(RESET_STATE)
     commit(`${PROCESSO}/${RESET_STATE}`)
-    commit(`${PROCESSO}/${SET_ANO}`, new Date().getFullYear().toString())
+    commit(`${PROCESSO}/${UPDATE_FIELD}`, { path: 'ano', value: new Date().getFullYear().toString() })
+
+    commit(START_LOADING)
+    try {
+      await Promise.all([
+        ApiService.get('/processos/objeto/tipo/options').then(result => commit(SET_OPTIONS, { path: 'objetoTipos', value: result })),
+        ApiService.get('/processos/tipo/options').then(result => commit(SET_OPTIONS, { path: 'processoTipos', value: result }))
+      ])
+    } catch(err) {
+      throw err
+    } finally {
+      commit(END_LOADING)
+    }
   },
   [TOGGLE_NOME_LOCKING] ({ dispatch, commit, getters }) {
     commit(SET_NOME_LOCKING, !getters.isNomeLocked)

@@ -1,10 +1,9 @@
 import ApiService from 'services/api.service'
 
-import processo from 'store/modules/processo.geral'
 import workflow from 'store/modules/processo.workflow'
 
-import { PROCESSO, WORKFLOW } from 'store/namespaces'
-import { END_LOADING, RESET_STATE, SET_ITEMS, SET_ID, SET_SEARCH, START_LOADING, SET_STEPS } from 'store/mutation.types'
+import { WORKFLOW } from 'store/namespaces'
+import { END_LOADING, RESET_STATE, SET_ITEMS, SET_SEARCH, START_LOADING, SET_PROCESSO_ID, SET_STEPS } from 'store/mutation.types'
 import { START_VIEW, SELECT_PROCESSO } from 'store/action.types'
 
 
@@ -12,13 +11,13 @@ function getInitialState () {
   return {
     isLoading: false,
     items: [],
+    processoId: null, // String
     search: null // String
   }
 }
 const state = getInitialState
 
 const modules = {
-  [PROCESSO]: processo,
   [WORKFLOW]: workflow
 }
 
@@ -32,7 +31,7 @@ const getters = {
   },
   processo (state, getters) {
     return {
-      id: getters[`${PROCESSO}/id`],
+      id: state.processoId,
       workflow: getters[`${WORKFLOW}/steps`]
     }
   },
@@ -49,6 +48,9 @@ const mutations = {
   },
   [SET_ITEMS] (state, items) {
     state.items = items
+  },
+  [SET_PROCESSO_ID] (state, processoId) {
+    state.processoId = processoId
   },
   [SET_SEARCH] (state, search) {
     state.search = search
@@ -67,7 +69,6 @@ const actions = {
 
   async [START_VIEW] ({ commit }) {
     commit(RESET_STATE)
-    commit(`${PROCESSO}/${RESET_STATE}`)
     commit(`${WORKFLOW}/${RESET_STATE}`)
 
     commit(START_LOADING)
@@ -82,7 +83,7 @@ const actions = {
     }
   },
   [SELECT_PROCESSO] ({ commit }, processo) {
-    commit(`${PROCESSO}/${SET_ID}`, processo.id)
+    commit(SET_PROCESSO_ID, processo.id)
     commit(`${WORKFLOW}/${SET_STEPS}`, processo.workflow)
   }
 
