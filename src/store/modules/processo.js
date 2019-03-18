@@ -18,7 +18,7 @@ function getInitialState () {
       descricao: null, // String
       tipo: null // String
     },
-    representante: {
+    requerente: {
       nome: null, // String
       isPessoaFisica: true
     },
@@ -53,8 +53,8 @@ const actions = {
     commit(UPDATE_FIELD, { path: 'numero', value: processo.numero })
     commit(UPDATE_FIELD, { path: 'objeto.codigo', value: processo.objeto.codigo })
     commit(UPDATE_FIELD, { path: 'objeto.descricao', value: processo.objeto.descricao })
-    commit(UPDATE_FIELD, { path: 'representante.nome', value: processo.representante.nome })
-    commit(UPDATE_FIELD, { path: 'representante.isPessoaFisica', value: processo.representante.isPessoaFisica })
+    commit(UPDATE_FIELD, { path: 'requerente.nome', value: processo.requerente.nome })
+    commit(UPDATE_FIELD, { path: 'requerente.isPessoaFisica', value: processo.requerente.isPessoaFisica })
     commit(UPDATE_FIELD, { path: 'tipo', value: processo.tipo })
   }
 

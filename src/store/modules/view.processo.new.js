@@ -6,7 +6,7 @@ import processo from 'store/modules/processo'
 import { PROCESSO } from 'store/namespaces'
 import {
   UPDATE_FIELD, END_LOADING, SET_ANO, SET_ID, SET_NOME,
-  SET_NOME_LOCKING, SET_NUMERO, SET_OPTIONS, START_LOADING, RESET_STATE
+  SET_NOME_LOCKING, SET_NUMERO, SET_SELECT_OPTIONS, START_LOADING, RESET_STATE
 } from 'store/mutation.types'
 import { AUTO_CHANGE_NOME, SAVE_PROCESSO, START_PROCESSO, CHANGE_ANO, CHANGE_NOME, CHANGE_NUMERO, START_VIEW, TOGGLE_NOME_LOCKING } from 'store/action.types'
 
@@ -18,7 +18,7 @@ function getInitialState () {
     selectOptions: {
       objetoTipos: [],
       processoTipos: [],
-      representanteTipos: [{ text: 'Jurídica', value: false }, { text: 'Física', value: true }]
+      requerenteTipos: [{ text: 'Jurídica', value: false }, { text: 'Física', value: true }]
     }
   }
 }
@@ -53,7 +53,7 @@ const mutations = {
   [SET_NOME_LOCKING] (state, isLocking) {
     state.isNomeLocked = isLocking
   },
-  [SET_OPTIONS] (state, payload) {
+  [SET_SELECT_OPTIONS] (state, payload) {
     state.selectOptions[payload.path] = payload.value
   },
   [START_LOADING] (state) {
@@ -107,8 +107,8 @@ const actions = {
     commit(START_LOADING)
     try {
       await Promise.all([
-        ApiService.get('/processos/objeto/tipo/options').then(result => commit(SET_OPTIONS, { path: 'objetoTipos', value: result })),
-        ApiService.get('/processos/tipo/options').then(result => commit(SET_OPTIONS, { path: 'processoTipos', value: result }))
+        ApiService.get('/processos/objeto/tipo/options').then(result => commit(SET_SELECT_OPTIONS, { path: 'objetoTipos', value: result })),
+        ApiService.get('/processos/tipo/options').then(result => commit(SET_SELECT_OPTIONS, { path: 'processoTipos', value: result }))
       ])
     } catch(err) {
       throw err

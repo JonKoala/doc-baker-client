@@ -46,15 +46,15 @@
             </v-flex>
           </v-layout>
 
-          <!-- Dados da representacao -->
+          <!-- Dados do requerente -->
           <v-divider class="mt-4"></v-divider>
-          <v-subheader>Representante</v-subheader>
+          <v-subheader>Requerente</v-subheader>
           <v-layout row wrap class="px-4">
             <v-flex xs4>
-              <v-select v-model="representanteIsPessoaFisica" v-bind:items="selectOptions.representanteTipos" label="Tipo" hide-details></v-select>
+              <v-select v-model="requerenteIsPessoaFisica" v-bind:items="selectOptions.requerenteTipos" label="Tipo" hide-details></v-select>
             </v-flex>
             <v-flex xs8>
-              <v-text-field v-model="representanteNome" label="Nome" hide-details></v-text-field>
+              <v-text-field v-model="requerenteNome" label="Nome" hide-details></v-text-field>
             </v-flex>
           </v-layout>
 
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import { mapFields } from 'vuex-map-fields'
 
 import { VIEW_PROCESSO_NEW, PROCESSO } from 'store/namespaces'
@@ -98,8 +98,8 @@ export default {
       objetoCodigo: 'objeto.codigo',
       objetoDescricao: 'objeto.descricao',
       objetoTipo: 'objeto.tipo',
-      representanteNome: 'representante.nome',
-      representanteIsPessoaFisica: 'representante.isPessoaFisica',
+      requerenteNome: 'requerente.nome',
+      requerenteIsPessoaFisica: 'requerente.isPessoaFisica',
       tipo: 'tipo'
     }),
     numero: {
