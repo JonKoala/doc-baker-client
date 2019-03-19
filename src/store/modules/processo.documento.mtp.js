@@ -1,52 +1,40 @@
-import { SET_AUDITORES, SET_PRESENTE_FUMUS, SET_PRESENTE_PERICULUM, SET_REQUISITOS_PRESENTES, RESET_STATE } from 'store/mutation.types'
+import { getField, updateField } from 'vuex-map-fields'
+
+import { PUSH_IRREGULARIDADE, REMOVE_IRREGULARIDADE, UPDATE_FIELD, RESET_STATE } from 'store/mutation.types'
 import { START_MTP } from 'store/action.types'
 
 
 function getInitialState () {
   return {
-    auditores: [], // Strings
+    auditores: [], // Objects { text: String, value: String }
+    irregularidades: [{ text: null }],
     pressupostos: {
       presenteFumus: false,
       presentePericulum: 'NÃO'
     },
-    requisitosPresentes: [] // Strings
+    requisitosPresentes: [], // Strings
+    template: 'MTP'
   }
 }
 const state = getInitialState
 
 const getters = {
 
-  state (state) {
-    return state
-  },
-  auditores (state) {
-    return state.auditores
-  },
-  presenteFumus (state) {
-    return state.pressupostos.presenteFumus
-  },
-  presentePericulum (state) {
-    return state.pressupostos.presentePericulum
-  },
-  requisitosPresentes (state) {
-    return state.requisitosPresentes
+  getField,
+  clone (state) {
+    return { ...state }
   }
 
 }
 
 const mutations = {
 
-  [SET_AUDITORES] (state, auditores) {
-    state.auditores = auditores
+  updateField,
+  [PUSH_IRREGULARIDADE] (state) {
+    state.irregularidades.push({ text: '' })
   },
-  [SET_PRESENTE_FUMUS] (state, value) {
-    state.pressupostos.presenteFumus = value
-  },
-  [SET_PRESENTE_PERICULUM] (state, value) {
-    state.pressupostos.presentePericulum = value
-  },
-  [SET_REQUISITOS_PRESENTES] (state, requisitos) {
-    state.requisitosPresentes = requisitos
+  [REMOVE_IRREGULARIDADE] (state, index) {
+    state.irregularidades.splice(index, 1)
   },
   [RESET_STATE] (state) {
     const initialState = getInitialState()
@@ -58,11 +46,14 @@ const mutations = {
 const actions = {
 
   [START_MTP] ({ commit }, mtp) {
-    commit(SET_AUDITORES, mtp.auditores)
-    commit(SET_REQUISITOS_PRESENTES, mtp.requisitosPresentes)
-    if (mtp.pressupostos) {
-      commit(SET_PRESENTE_FUMUS, mtp.pressupostos.presenteFumus)
-      commit(SET_PRESENTE_PERICULUM, mtp.pressupostos.presentePericulum)
+    if (mtp) {
+      commit(UPDATE_FIELD, { path: 'auditores', value: mtp.auditores.map(a => { return { text: a.nome, value: a._id } }) })
+      commit(UPDATE_FIELD, { path: 'irregularidades', value: mtp.irregularidades.map(i => { return { text: i } }) })
+      commit(UPDATE_FIELD, { path: 'requisitosPresentes', value: mtp.requisitosPresentes })
+      if (mtp.pressupostos) {
+        commit(UPDATE_FIELD, { path: 'pressupostos.presenteFumus', value: mtp.pressupostos.presenteFumus })
+        commit(UPDATE_FIELD, { path: 'pressupostos.presentePericulum', value: mtp.pressupostos.presentePericulum })
+      }
     }
   }
 
