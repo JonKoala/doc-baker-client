@@ -4,11 +4,8 @@ import stateMachine from 'services/statemachine.service'
 import processo from 'store/modules/processo'
 
 import { PROCESSO } from 'store/namespaces'
-import {
-  UPDATE_FIELD, END_LOADING, SET_ANO, SET_ID, SET_NOME,
-  SET_NOME_LOCKING, SET_NUMERO, SET_SELECT_OPTIONS, START_LOADING, RESET_STATE
-} from 'store/mutation.types'
-import { AUTO_CHANGE_NOME, SAVE_PROCESSO, START_PROCESSO, CHANGE_ANO, CHANGE_NOME, CHANGE_NUMERO, START_VIEW, TOGGLE_NOME_LOCKING } from 'store/action.types'
+import { END_LOADING, RESET_STATE, SET_NOME_LOCKING, SET_SELECT_OPTIONS, START_LOADING, UPDATE_FIELD } from 'store/mutation.types'
+import { AUTO_CHANGE_NOME, CHANGE_ANO, CHANGE_NOME, CHANGE_NUMERO, SAVE, START, TOGGLE_NOME_LOCKING } from 'store/action.types'
 
 
 function getInitialState () {
@@ -74,12 +71,12 @@ const actions = {
     else
       dispatch(CHANGE_NOME, null)
   },
-  async [SAVE_PROCESSO] ({ commit, dispatch, getters }) {
+  async [SAVE] ({ commit, dispatch, getters }) {
 
     commit(START_LOADING)
     try {
       var response = await ApiService.post('processos', { ...getters[`${PROCESSO}/clone`], workflow: stateMachine.getFreshWorkflow() })
-      await dispatch(`${PROCESSO}/${START_PROCESSO}`, { ...response.data, id: response.data._id })
+      await dispatch(`${PROCESSO}/${START}`, { ...response.data, id: response.data._id })
     } catch (err) {
       throw err
     } finally {
@@ -99,7 +96,7 @@ const actions = {
     if (getters.isNomeLocked)
       dispatch(AUTO_CHANGE_NOME)
   },
-  async [START_VIEW] ({ commit, dispatch }) {
+  async [START] ({ commit, dispatch }) {
     commit(RESET_STATE)
     commit(`${PROCESSO}/${RESET_STATE}`)
     commit(`${PROCESSO}/${UPDATE_FIELD}`, { path: 'ano', value: new Date().getFullYear().toString() })

@@ -3,8 +3,8 @@ import ApiService from 'services/api.service'
 import workflow from 'store/modules/processo.workflow'
 
 import { WORKFLOW } from 'store/namespaces'
-import { END_LOADING, RESET_STATE, SET_ITEMS, SET_SEARCH, START_LOADING, SET_PROCESSO_ID, SET_STEPS } from 'store/mutation.types'
-import { START_VIEW, SELECT_PROCESSO } from 'store/action.types'
+import { END_LOADING, RESET_STATE, SET_ITEMS, SET_PROCESSO_ID, SET_SEARCH, SET_STEPS, START_LOADING } from 'store/mutation.types'
+import { START, SELECT_PROCESSO } from 'store/action.types'
 
 
 function getInitialState () {
@@ -67,7 +67,7 @@ const mutations = {
 
 const actions = {
 
-  async [START_VIEW] ({ commit }) {
+  async [START] ({ commit }) {
     commit(RESET_STATE)
     commit(`${WORKFLOW}/${RESET_STATE}`)
 

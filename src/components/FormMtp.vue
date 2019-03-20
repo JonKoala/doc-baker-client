@@ -65,12 +65,9 @@
 import { mapGetters, mapMutations } from 'vuex'
 import { mapFields, mapMultiRowFields } from 'vuex-map-fields'
 
-import { FORM_MTP, MTP, IRREGULARIDADES, PROCESSO } from 'store/namespaces'
-import { SAVE_MTP, START_VIEW } from 'store/action.types'
-import {
-  PUSH_IRREGULARIDADE, REMOVE_IRREGULARIDADE, SET_AUDITORES, SET_PRESENTE_FUMUS, SET_PRESENTE_PERICULUM, SET_IRREGULARIDADE_TITULO,
-  SET_OBJETO_CODIGO, SET_OBJETO_DESCRICAO, SET_REPRESENTANTE_NOME, SET_REPRESENTANTE_PESSOA_FISICA, SET_REQUISITOS_PRESENTES, SET_TIPO
-} from 'store/mutation.types'
+import { FORM_MTP, MTP } from 'store/namespaces'
+import { SAVE, START } from 'store/action.types'
+import { PUSH_IRREGULARIDADE, REMOVE_IRREGULARIDADE } from 'store/mutation.types'
 
 import BaseIconButton from 'components/BaseIconButton'
 
@@ -133,7 +130,7 @@ export default {
         window.location.href = this.bakingLink
     },
     saveData () {
-      return this.$store.dispatch(`${FORM_MTP}/${SAVE_MTP}`)
+      return this.$store.dispatch(`${FORM_MTP}/${SAVE}`)
       .then(() => {
         this.noteMessage = 'Formulário salvo com sucesso!'
         return true
@@ -147,7 +144,7 @@ export default {
     },
   },
   created () {
-    this.$store.dispatch(`${FORM_MTP}/${START_VIEW}`)
+    this.$store.dispatch(`${FORM_MTP}/${START}`)
   }
 }
 </script>

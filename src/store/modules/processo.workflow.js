@@ -2,7 +2,7 @@ import Vue from 'vue'
 
 import stateMachine from 'services/statemachine.service'
 
-import { PUSH_STEP, POP_STEP, SET_STEP_ACTION, SET_STEPS, RESET_STATE } from 'store/mutation.types'
+import { PUSH_STEP, POP_STEP, RESET_STATE, SET_STEP_ACTION, SET_STEPS } from 'store/mutation.types'
 import { TAKE_ACTION, UNDO_ACTION } from 'store/action.types'
 
 

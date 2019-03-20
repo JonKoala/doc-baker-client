@@ -30,7 +30,7 @@ import Vue from 'vue'
 import { mapGetters } from 'vuex'
 
 import { VIEW_PROCESSO_EDIT } from 'store/namespaces'
-import { START_VIEW, TAKE_ACTION, UNDO_ACTION } from 'store/action.types'
+import { START, TAKE_ACTION, UNDO_ACTION } from 'store/action.types'
 
 import FormIti from 'components/FormIti'
 import FormMt from 'components/FormMt'
@@ -93,7 +93,7 @@ export default {
     }
   },
   async mounted () {
-    await this.$store.dispatch(`${VIEW_PROCESSO_EDIT}/${START_VIEW}`)
+    await this.$store.dispatch(`${VIEW_PROCESSO_EDIT}/${START}`)
     this.updateFormVisibility()
     this.scrollToBottom()
   }

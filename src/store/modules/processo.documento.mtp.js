@@ -1,7 +1,7 @@
 import { getField, updateField } from 'vuex-map-fields'
 
-import { PUSH_IRREGULARIDADE, REMOVE_IRREGULARIDADE, UPDATE_FIELD, RESET_STATE } from 'store/mutation.types'
-import { START_MTP } from 'store/action.types'
+import { PUSH_IRREGULARIDADE, REMOVE_IRREGULARIDADE, RESET_STATE, UPDATE_FIELD } from 'store/mutation.types'
+import { START } from 'store/action.types'
 
 
 function getInitialState () {
@@ -45,7 +45,7 @@ const mutations = {
 
 const actions = {
 
-  [START_MTP] ({ commit }, mtp) {
+  [START] ({ commit }, mtp) {
     if (mtp) {
       commit(UPDATE_FIELD, { path: 'auditores', value: mtp.auditores.map(a => { return { text: a.nome, value: a._id } }) })
       commit(UPDATE_FIELD, { path: 'irregularidades', value: mtp.irregularidades.map(i => { return { text: i } }) })

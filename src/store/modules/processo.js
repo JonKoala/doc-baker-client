@@ -1,11 +1,7 @@
 import { getField, updateField } from 'vuex-map-fields'
 
-import {
-  UPDATE_FIELD,
-  SET_ANO, SET_ID, SET_NOME, SET_NUMERO, SET_OBJETO_CODIGO, SET_OBJETO_DESCRICAO,
-  SET_REPRESENTANTE_NOME, SET_REPRESENTANTE_PESSOA_FISICA, SET_TIPO, RESET_STATE
-} from 'store/mutation.types'
-import { START_PROCESSO } from 'store/action.types'
+import { RESET_STATE, UPDATE_FIELD } from 'store/mutation.types'
+import { START } from 'store/action.types'
 
 function getInitialState () {
   return {
@@ -28,10 +24,12 @@ function getInitialState () {
 const state = getInitialState
 
 const getters = {
+
   getField,
   clone (state) {
     return { ...state }
   }
+  
 }
 
 const mutations = {
@@ -46,7 +44,7 @@ const mutations = {
 
 const actions = {
 
-  [START_PROCESSO] ({ commit }, processo) {
+  [START] ({ commit }, processo) {
     commit(UPDATE_FIELD, { path: 'ano', value: processo.ano })
     commit(UPDATE_FIELD, { path: 'id', value: processo.id })
     commit(UPDATE_FIELD, { path: 'nome', value: processo.nome })

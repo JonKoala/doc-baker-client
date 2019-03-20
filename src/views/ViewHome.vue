@@ -45,7 +45,7 @@
 import Vue from 'vue'
 import { mapGetters } from 'vuex'
 
-import { START_VIEW, SELECT_PROCESSO } from 'store/action.types'
+import { START, SELECT_PROCESSO } from 'store/action.types'
 import { SET_SEARCH } from 'store/mutation.types'
 import { VIEW_HOME } from 'store/namespaces'
 
@@ -102,7 +102,7 @@ export default {
   },
   async created () {
     try {
-      await this.$store.dispatch(`${VIEW_HOME}/${START_VIEW}`)
+      await this.$store.dispatch(`${VIEW_HOME}/${START}`)
     } catch (err) {
       this.isError = true
       console.log(err)

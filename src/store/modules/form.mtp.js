@@ -3,8 +3,8 @@ import ApiService from 'services/api.service'
 import mtp from 'store/modules/processo.documento.mtp'
 
 import { MTP, VIEW_PROCESSO_EDIT, WORKFLOW } from 'store/namespaces'
-import { END_LOADING, SET_STEPS, SET_SELECT_OPTIONS, SET_TIPO_OPTIONS, START_LOADING, RESET_STATE } from 'store/mutation.types'
-import { SAVE_MTP, START_IRREGULARIDADES, START_MTP, START_PROCESSO, START_VIEW } from 'store/action.types'
+import { END_LOADING, RESET_STATE, SET_SELECT_OPTIONS, START_LOADING } from 'store/mutation.types'
+import { SAVE, START } from 'store/action.types'
 
 
 function getInitialState () {
@@ -64,7 +64,7 @@ const mutations = {
 
 const actions = {
 
-  async [SAVE_MTP] ({ commit, dispatch, getters }) {
+  async [SAVE] ({ commit, dispatch, getters }) {
 
     var processo = getters.paramId
     var documento = getters[`${MTP}/clone`]
@@ -74,14 +74,14 @@ const actions = {
     commit(START_LOADING)
     try {
       var response = await ApiService.put('documentos', { processo, documento })
-      dispatch(`${MTP}/${START_MTP}`, response.data)
+      dispatch(`${MTP}/${START}`, response.data)
     } catch (err) {
       throw err
     } finally {
       commit(END_LOADING)
     }
   },
-  async [START_VIEW] ({ commit, dispatch, getters }) {
+  async [START] ({ commit, dispatch, getters }) {
     commit(RESET_STATE)
     commit(`${MTP}/${RESET_STATE}`)
 
@@ -90,7 +90,7 @@ const actions = {
       await Promise.all([
         ApiService.get('/auditores').then(result => commit(SET_SELECT_OPTIONS, { path: 'auditores', value: result })),
         ApiService.get('/criterioslegais/admissibilidade').then(result => commit(SET_SELECT_OPTIONS, { path: 'requisitosAdmissibilidade', value: result })),
-        ApiService.get('/documentos', { params: { processo: getters.paramId, template: 'MTP' } }).then(documento => dispatch(`${MTP}/${START_MTP}`, documento)),
+        ApiService.get('/documentos', { params: { processo: getters.paramId, template: 'MTP' } }).then(documento => dispatch(`${MTP}/${START}`, documento)),
         ApiService.get('/documentos/periculum/options').then(result => commit(SET_SELECT_OPTIONS, { path: 'periculum', value: result }))
       ])
     } catch(err) {

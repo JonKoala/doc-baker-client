@@ -74,7 +74,7 @@ import { mapGetters } from 'vuex'
 import { mapFields } from 'vuex-map-fields'
 
 import { VIEW_PROCESSO_NEW, PROCESSO } from 'store/namespaces'
-import { SAVE_PROCESSO, CHANGE_ANO, CHANGE_NOME, CHANGE_NUMERO, START_VIEW, TOGGLE_NOME_LOCKING } from 'store/action.types'
+import { CHANGE_ANO, CHANGE_NOME, CHANGE_NUMERO, SAVE, START, TOGGLE_NOME_LOCKING } from 'store/action.types'
 
 import BaseIconButton from 'components/BaseIconButton'
 
@@ -124,7 +124,7 @@ export default {
   methods: {
     async saveProcesso () {
       try {
-        await this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${SAVE_PROCESSO}`)
+        await this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${SAVE}`)
         this.$router.push({ name: 'editProcesso', params: { id: this.$store.getters[`${VIEW_PROCESSO_NEW}/processoField`]('id') } })
       } catch (err) {
         this.isNotifying = true
@@ -136,7 +136,7 @@ export default {
     }
   },
   created () {
-    this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${START_VIEW}`)
+    this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${START}`)
   }
 }
 </script>
