@@ -12,8 +12,7 @@ function getInitialState () {
       presenteFumus: false,
       presentePericulum: 'NÃO'
     },
-    requisitosPresentes: [], // Strings
-    template: 'MTP'
+    requisitosPresentes: [] // Strings
   }
 }
 const state = getInitialState

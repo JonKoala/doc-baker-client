@@ -1,72 +1,77 @@
 <template>
-  <v-container grid-list-lg fluid>
-    <v-layout justify-center>
-      <v-flex xs5>
-        <v-card>
-          <v-toolbar color="blue-grey" dense card>
-            <v-toolbar-title class="white--text">NOVO PROCESSO</v-toolbar-title>
-          </v-toolbar>
-          <v-progress-linear v-bind:active="isLoading" class="my-0" color="blue" indeterminate></v-progress-linear>
+  <v-form v-model="isFormValid">
+    <v-container grid-list-lg fluid class="pa-4">
+      <v-layout justify-center>
+        <v-flex xs5>
+          <v-card>
+            <v-toolbar color="blue-grey" dense card>
+              <v-toolbar-title class="white--text">NOVO PROCESSO</v-toolbar-title>
+            </v-toolbar>
+            <v-progress-linear v-bind:active="isLoading" class="my-0" color="blue" indeterminate></v-progress-linear>
 
-          <!-- Dados gerais -->
-          <v-layout row wrap class="px-4">
-            <v-flex xs6>
-              <v-text-field v-model="numero" v-bind:disabled="isLoading" label="Número" hide-details></v-text-field>
-            </v-flex>
-            <v-flex xs2>
-              <v-text-field v-model="ano" v-bind:disabled="isLoading" label="Ano" hide-details></v-text-field>
-            </v-flex>
-            <v-flex xs4>
-              <v-select v-model="tipo" v-bind:items="selectOptions.processoTipos" label="Tipo" hide-details></v-select>
-            </v-flex>
-            <v-flex xs8>
-              <v-text-field v-model="nome" v-bind:disabled="isNomeLocked || isLoading" label="Nome" hide-details></v-text-field>
-            </v-flex>
-            <v-flex class="pt-3" xs1>
-              <base-icon-button v-on:click="toggleNomeEditMode" v-bind:disabled="isLoading" v-bind:tooltip="nomeEditModeButtonTooltip" top>
-                {{ nomeEditModeButtonIcon }}
-              </base-icon-button>
-            </v-flex>
-          </v-layout>
+            <!-- Dados gerais -->
+            <v-layout row wrap class="px-4">
+              <v-flex xs6>
+                <v-text-field v-model="numero" v-bind:disabled="isLoading" v-bind:rules="[ruleRequired]" label="Número" hide-details required></v-text-field>
+              </v-flex>
+              <v-flex xs2>
+                <v-text-field v-model="ano" v-bind:disabled="isLoading" v-bind:rules="[ruleRequired]" label="Ano" hide-details required></v-text-field>
+              </v-flex>
+              <v-flex xs4>
+                <v-select v-model="tipo" v-bind:items="selectOptions.processoTipos" v-bind:rules="[ruleRequired]" label="Tipo" hide-details required></v-select>
+              </v-flex>
+              <v-flex xs8>
+                <v-text-field v-model="nome" v-bind:disabled="isNomeLocked || isLoading" v-bind:rules="[ruleRequired]" label="Nome" hide-details required>
+                </v-text-field>
+              </v-flex>
+              <v-flex class="pt-3" xs1>
+                <base-icon-button v-on:click="toggleNomeEditMode" v-bind:disabled="isLoading" v-bind:tooltip="nomeEditModeButtonTooltip" top>
+                  {{ nomeEditModeButtonIcon }}
+                </base-icon-button>
+              </v-flex>
+            </v-layout>
 
-          <!-- Dados do objeto -->
-          <v-divider class="mt-4"></v-divider>
-          <v-subheader>Objeto</v-subheader>
-          <v-layout row wrap class="px-4">
-            <v-flex xs4>
-              <v-select v-model="objetoTipo" v-bind:items="selectOptions.objetoTipos" label="Tipo" hide-details></v-select>
-            </v-flex>
-            <v-flex xs8>
-              <v-text-field v-model="objetoCodigo" label="Código" hide-details>
-              </v-text-field>
-            </v-flex>
-            <v-flex xs12>
-              <v-textarea v-model="objetoDescricao"  label="Descrição" auto-grow rows="1" hide-details>
-              </v-textarea>
-            </v-flex>
-          </v-layout>
+            <!-- Dados do objeto -->
+            <v-divider class="mt-4"></v-divider>
+            <v-subheader>Objeto</v-subheader>
+            <v-layout row wrap class="px-4">
+              <v-flex xs4>
+                <v-select v-model="objetoTipo" v-bind:items="selectOptions.objetoTipos" v-bind:rules="[ruleRequired]" label="Tipo" hide-details required>
+                </v-select>
+              </v-flex>
+              <v-flex xs8>
+                <v-text-field v-model="objetoCodigo" v-bind:rules="[ruleRequired]" label="Código" hide-details required>
+                </v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-textarea v-model="objetoDescricao" v-bind:rules="[ruleRequired]" label="Descrição" auto-grow rows="1" hide-details required>
+                </v-textarea>
+              </v-flex>
+            </v-layout>
 
-          <!-- Dados do requerente -->
-          <v-divider class="mt-4"></v-divider>
-          <v-subheader>Requerente</v-subheader>
-          <v-layout row wrap class="px-4">
-            <v-flex xs4>
-              <v-select v-model="requerenteIsPessoaFisica" v-bind:items="selectOptions.requerenteTipos" label="Tipo" hide-details></v-select>
-            </v-flex>
-            <v-flex xs8>
-              <v-text-field v-model="requerenteNome" label="Nome" hide-details></v-text-field>
-            </v-flex>
-          </v-layout>
+            <!-- Dados do requerente -->
+            <v-divider class="mt-4"></v-divider>
+            <v-subheader>Requerente</v-subheader>
+            <v-layout row wrap class="px-4">
+              <v-flex xs4>
+                <v-select v-model="requerenteIsPessoaFisica" v-bind:items="selectOptions.requerenteTipos" v-bind:rules="[ruleRequired]"
+                label="Tipo" hide-details required></v-select>
+              </v-flex>
+              <v-flex xs8>
+                <v-text-field v-model="requerenteNome" v-bind:rules="[ruleRequired]" label="Nome" hide-details required></v-text-field>
+              </v-flex>
+            </v-layout>
 
-          <v-layout row wrap justify-end class="pr-4 pt-4 pb-2">
-            <v-btn v-bind:disabled="isLoading" v-on:click="saveProcesso" large class="mt-1">Salvar</v-btn>
-          </v-layout>
+            <v-layout row wrap justify-end class="pr-4 pt-4 pb-2">
+              <v-btn v-bind:disabled="!isSavable" v-on:click="saveProcesso" large class="mt-1">Salvar</v-btn>
+            </v-layout>
 
-        </v-card>
-      </v-flex>
-    </v-layout>
-    <v-snackbar v-model="isNotifying" v-bind:timeout="5000" bottom right>Ocorreu um erro ao tentar salvar o processo</v-snackbar>
-  </v-container>
+          </v-card>
+        </v-flex>
+      </v-layout>
+      <v-snackbar v-model="isNotifying" v-bind:timeout="5000" bottom right>Ocorreu um erro ao tentar salvar o processo</v-snackbar>
+    </v-container>
+  </v-form>
 </template>
 
 <script>
@@ -85,6 +90,7 @@ export default {
   },
   data () {
     return {
+      isFormValid: false,
       isNotifying: false
     }
   },
@@ -114,22 +120,29 @@ export default {
       get () {  return this.$store.getters[`${VIEW_PROCESSO_NEW}/processoField`]('nome') },
       set (value) { this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${CHANGE_NOME}`, value) }
     },
+    isSavable () {
+      return !this.isLoading && this.isFormValid
+    },
     nomeEditModeButtonIcon () {
       return (this.isNomeLocked) ? 'edit' : 'sync'
     },
     nomeEditModeButtonTooltip () {
       return (this.isNomeLocked) ? 'manual' : 'automatico'
+    },
+    ruleRequired () {
+      return v => !!v || ''
     }
   },
   methods: {
     async saveProcesso () {
-      try {
-        await this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${SAVE}`)
-        this.$router.push({ name: 'editProcesso', params: { id: this.$store.getters[`${VIEW_PROCESSO_NEW}/processoField`]('id') } })
-      } catch (err) {
-        this.isNotifying = true
-        console.log(err)
-      }
+      if (this.isSavable)
+        try {
+          await this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${SAVE}`)
+          this.$router.push({ name: 'editProcesso', params: { id: this.$store.getters[`${VIEW_PROCESSO_NEW}/processoField`]('id') } })
+        } catch (err) {
+          this.isNotifying = true
+          console.log(err)
+        }
     },
     toggleNomeEditMode () {
       this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${TOGGLE_NOME_LOCKING}`)

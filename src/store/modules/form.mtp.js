@@ -68,6 +68,7 @@ const actions = {
 
     var processo = getters.paramId
     var documento = getters[`${MTP}/clone`]
+    documento.template = 'MTP'
     documento.auditores = documento.auditores.map(a => a.value)
     documento.irregularidades = documento.irregularidades.map(a => a.text)
 

@@ -30,7 +30,7 @@
 
     <template v-if="showPressupostos">
       <v-divider class="mt-4"></v-divider>
-      <v-subheader>Pressupostos</v-subheader>
+      <v-subheader>Pressupostos Cautelares</v-subheader>
       <v-layout row wrap class="pl-5">
         <v-flex xs3>
           <v-checkbox v-model="presenteFumus" label="fumus boni iuris" class="italic-label" color="blue darken-2" hide-details></v-checkbox>
