@@ -7,6 +7,7 @@ function getInitialState () {
   return {
     ano: null, // String
     id: null, // String
+    jurisdicionado: null, //String
     nome: null, // String
     numero: null, // String
     objeto: {
@@ -29,7 +30,7 @@ const getters = {
   clone (state) {
     return { ...state }
   }
-  
+
 }
 
 const mutations = {
@@ -47,6 +48,7 @@ const actions = {
   [START] ({ commit }, processo) {
     commit(UPDATE_FIELD, { path: 'ano', value: processo.ano })
     commit(UPDATE_FIELD, { path: 'id', value: processo.id })
+    commit(UPDATE_FIELD, { path: 'jurisdicionado', value: processo.jurisdicionado })
     commit(UPDATE_FIELD, { path: 'nome', value: processo.nome })
     commit(UPDATE_FIELD, { path: 'numero', value: processo.numero })
     commit(UPDATE_FIELD, { path: 'objeto.codigo', value: processo.objeto.codigo })

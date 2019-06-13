@@ -92,7 +92,7 @@ const actions = {
         ApiService.get('/auditores').then(result => commit(SET_SELECT_OPTIONS, { path: 'auditores', value: result })),
         ApiService.get('/criterioslegais/admissibilidade').then(result => commit(SET_SELECT_OPTIONS, { path: 'requisitosAdmissibilidade', value: result })),
         ApiService.get('/documentos', { params: { processo: getters.paramId, template: 'MTP' } }).then(documento => dispatch(`${MTP}/${START}`, documento)),
-        ApiService.get('/documentos/periculum/options').then(result => commit(SET_SELECT_OPTIONS, { path: 'periculum', value: result }))
+        ApiService.get('/documentos/cautelar/periculum/options').then(result => commit(SET_SELECT_OPTIONS, { path: 'periculum', value: result }))
       ])
     } catch(err) {
       throw err

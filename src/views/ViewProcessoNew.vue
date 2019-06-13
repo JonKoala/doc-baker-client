@@ -17,9 +17,6 @@
               <v-flex xs2>
                 <v-text-field v-model="ano" v-bind:disabled="isLoading" v-bind:rules="[ruleRequired]" label="Ano" hide-details required></v-text-field>
               </v-flex>
-              <v-flex xs4>
-                <v-select v-model="tipo" v-bind:items="selectOptions.processoTipos" v-bind:rules="[ruleRequired]" label="Tipo" hide-details required></v-select>
-              </v-flex>
               <v-flex xs8>
                 <v-text-field v-model="nome" v-bind:disabled="isNomeLocked || isLoading" v-bind:rules="[ruleRequired]" label="Nome" hide-details required>
                 </v-text-field>
@@ -28,6 +25,13 @@
                 <base-icon-button v-on:click="toggleNomeEditMode" v-bind:disabled="isLoading" v-bind:tooltip="nomeEditModeButtonTooltip" top>
                   {{ nomeEditModeButtonIcon }}
                 </base-icon-button>
+              </v-flex>
+              <v-flex xs4>
+                <v-select v-model="tipo" v-bind:items="selectOptions.processoTipos" v-bind:rules="[ruleRequired]" label="Tipo" hide-details required></v-select>
+              </v-flex>
+              <v-flex xs8>
+                <v-text-field v-model="jurisdicionado" v-bind:disabled="isLoading" v-bind:rules="[ruleRequired]" label="Jurisdicionado" hide-details required>
+                </v-text-field>
               </v-flex>
             </v-layout>
 
@@ -101,6 +105,7 @@ export default {
       'selectOptions'
     ]),
     ...mapFields(`${VIEW_PROCESSO_NEW}/${PROCESSO}`, {
+      jurisdicionado: 'jurisdicionado',
       objetoCodigo: 'objeto.codigo',
       objetoDescricao: 'objeto.descricao',
       objetoTipo: 'objeto.tipo',

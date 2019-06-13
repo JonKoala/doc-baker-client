@@ -8,11 +8,13 @@ function getInitialState () {
   return {
     auditores: [], // Objects { text: String, value: String }
     irregularidades: [{ text: null }],
-    pressupostos: {
+    admissibilidade: {
+      requisitosPresentes: [] // Strings
+    },
+    cautelar: {
       presenteFumus: false,
       presentePericulum: 'NÃO'
-    },
-    requisitosPresentes: [] // Strings
+    }
   }
 }
 const state = getInitialState
@@ -48,10 +50,11 @@ const actions = {
     if (mtp) {
       commit(UPDATE_FIELD, { path: 'auditores', value: mtp.auditores.map(a => { return { text: a.nome, value: a._id } }) })
       commit(UPDATE_FIELD, { path: 'irregularidades', value: mtp.irregularidades.map(i => { return { text: i } }) })
-      commit(UPDATE_FIELD, { path: 'requisitosPresentes', value: mtp.requisitosPresentes })
-      if (mtp.pressupostos) {
-        commit(UPDATE_FIELD, { path: 'pressupostos.presenteFumus', value: mtp.pressupostos.presenteFumus })
-        commit(UPDATE_FIELD, { path: 'pressupostos.presentePericulum', value: mtp.pressupostos.presentePericulum })
+      if (mtp.admissibilidade)
+        commit(UPDATE_FIELD, { path: 'admissibilidade.requisitosPresentes', value: mtp.admissibilidade.requisitosPresentes })
+      if (mtp.cautelar) {
+        commit(UPDATE_FIELD, { path: 'cautelar.presenteFumus', value: mtp.cautelar.presenteFumus })
+        commit(UPDATE_FIELD, { path: 'cautelar.presentePericulum', value: mtp.cautelar.presentePericulum })
       }
     }
   }

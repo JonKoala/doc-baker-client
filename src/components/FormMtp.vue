@@ -28,7 +28,7 @@
       </v-layout>
     </template>
 
-    <template v-if="showPressupostos">
+    <template v-if="showCautelar">
       <v-divider class="mt-4"></v-divider>
       <v-subheader>Pressupostos Cautelares</v-subheader>
       <v-layout row wrap class="pl-5">
@@ -85,9 +85,9 @@ export default {
   computed: {
     ...mapFields(`${FORM_MTP}/${MTP}`, [
       'auditores',
-      'pressupostos.presenteFumus',
-      'pressupostos.presentePericulum',
-      'requisitosPresentes'
+      'cautelar.presenteFumus',
+      'cautelar.presentePericulum',
+      'admissibilidade.requisitosPresentes'
     ]),
     ...mapGetters(`${FORM_MTP}`, [
       'paramId',
@@ -116,7 +116,7 @@ export default {
     showRequisitos () {
       return ['f-mtp-1', 'f-mtp-3'].includes(this.form)
     },
-    showPressupostos () {
+    showCautelar () {
       return ['f-mtp-1', 'f-mtp-2'].includes(this.form)
     }
   },
