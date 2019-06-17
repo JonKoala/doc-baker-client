@@ -68,7 +68,7 @@ const actions = {
 
     commit(START_LOADING)
     try {
-      var { workflow, ...processo } = await ApiService.get(`processos/workflow/${getters.paramId}`)
+      var { workflow, ...processo } = await ApiService.get(`/processos/workflow/${getters.paramId}`)
       dispatch(`${PROCESSO}/${START}`, { id: processo._id, ...processo })
       commit(`${WORKFLOW}/${SET_STEPS}`, workflow)
     } catch(err) {
@@ -82,7 +82,7 @@ const actions = {
 
     commit(START_LOADING)
     try {
-      await ApiService.put('processos', { _id: getters.paramId, workflow: getters.workflow })
+      await ApiService.put('/processos', { _id: getters.paramId, workflow: getters.workflow })
     } catch (err) {
       throw err
     } finally {
@@ -94,7 +94,7 @@ const actions = {
 
     commit(START_LOADING)
     try {
-      await ApiService.put('processos', { _id: getters.paramId, workflow: getters.workflow })
+      await ApiService.put('/processos', { _id: getters.paramId, workflow: getters.workflow })
     } catch (err) {
       throw err
     } finally {

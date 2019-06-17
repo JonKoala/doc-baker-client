@@ -19,7 +19,7 @@
       <v-divider class="mt-4"></v-divider>
       <v-subheader>Requisitos de Admissibilidade</v-subheader>
       <v-layout column class="pl-5">
-        <v-checkbox v-for="admissibilidade in selectOptions.requisitosAdmissibilidade"
+        <v-checkbox v-for="admissibilidade in selectOptions.admissibilidade"
           v-model="requisitosPresentes"
           v-bind:label="admissibilidade.text"
           v-bind:value="admissibilidade.value"
@@ -106,7 +106,7 @@ export default {
 
       var incisoToIgnore = (this.processoField('requerente.isPessoaFisica')) ? 'V' : 'IV'
       return {
-        requisitosAdmissibilidade: options.requisitosAdmissibilidade
+        admissibilidade: options.admissibilidade
           .filter(r => r.inciso != incisoToIgnore)
           .map(r => { return { text: r.inciso + ' - ' + r.descricao.generico, value: r._id } }),
         auditores: options.auditores.map(a => { return { text: a.nome, value: a._id } }),

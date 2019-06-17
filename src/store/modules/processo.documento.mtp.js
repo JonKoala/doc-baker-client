@@ -51,7 +51,7 @@ const actions = {
       commit(UPDATE_FIELD, { path: 'auditores', value: mtp.auditores.map(a => { return { text: a.nome, value: a._id } }) })
       commit(UPDATE_FIELD, { path: 'irregularidades', value: mtp.irregularidades.map(i => { return { text: i } }) })
       if (mtp.admissibilidade)
-        commit(UPDATE_FIELD, { path: 'admissibilidade.requisitosPresentes', value: mtp.admissibilidade.requisitosPresentes })
+        commit(UPDATE_FIELD, { path: 'admissibilidade.requisitosPresentes', value: mtp.admissibilidade.requisitosPresentes.map(r => r._id) })
       if (mtp.cautelar) {
         commit(UPDATE_FIELD, { path: 'cautelar.presenteFumus', value: mtp.cautelar.presenteFumus })
         commit(UPDATE_FIELD, { path: 'cautelar.presentePericulum', value: mtp.cautelar.presentePericulum })
