@@ -135,7 +135,7 @@ export default {
       return (this.isNomeLocked) ? 'manual' : 'automatico'
     },
     ruleRequired () {
-      return v => !!v || ''
+      return v => v != null || ''
     }
   },
   methods: {
