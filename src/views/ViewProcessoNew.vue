@@ -12,13 +12,13 @@
             <!-- Dados gerais -->
             <v-layout row wrap class="px-4">
               <v-flex xs6>
-                <v-text-field v-model="numero" v-bind:disabled="isLoading" v-bind:rules="[ruleRequired]" label="Número" hide-details required></v-text-field>
+                <v-text-field v-model="numero" v-bind:disabled="isLoading" v-bind:rules="[NotBlank]" label="Número" hide-details required></v-text-field>
               </v-flex>
               <v-flex xs2>
-                <v-text-field v-model="ano" v-bind:disabled="isLoading" v-bind:rules="[ruleRequired]" label="Ano" hide-details required></v-text-field>
+                <v-text-field v-model="ano" v-bind:disabled="isLoading" v-bind:rules="[NotBlank]" label="Ano" hide-details required></v-text-field>
               </v-flex>
               <v-flex xs8>
-                <v-text-field v-model="nome" v-bind:disabled="isNomeLocked || isLoading" v-bind:rules="[ruleRequired]" label="Nome" hide-details required>
+                <v-text-field v-model="nome" v-bind:disabled="isNomeLocked || isLoading" v-bind:rules="[NotBlank]" label="Nome" hide-details required>
                 </v-text-field>
               </v-flex>
               <v-flex class="pt-3" xs1>
@@ -27,10 +27,10 @@
                 </base-icon-button>
               </v-flex>
               <v-flex xs4>
-                <v-select v-model="tipo" v-bind:items="selectOptions.processoTipos" v-bind:rules="[ruleRequired]" label="Tipo" hide-details required></v-select>
+                <v-select v-model="tipo" v-bind:items="selectOptions.processoTipos" v-bind:rules="[NotBlank]" label="Tipo" hide-details required></v-select>
               </v-flex>
               <v-flex xs8>
-                <v-text-field v-model="jurisdicionado" v-bind:disabled="isLoading" v-bind:rules="[ruleRequired]" label="Jurisdicionado" hide-details required>
+                <v-text-field v-model="jurisdicionado" v-bind:disabled="isLoading" v-bind:rules="[NotBlank]" label="Jurisdicionado" hide-details required>
                 </v-text-field>
               </v-flex>
             </v-layout>
@@ -40,15 +40,15 @@
             <v-subheader>Objeto</v-subheader>
             <v-layout row wrap class="px-4">
               <v-flex xs4>
-                <v-select v-model="objetoTipo" v-bind:items="selectOptions.objetoTipos" v-bind:rules="[ruleRequired]" label="Tipo" hide-details required>
+                <v-select v-model="objetoTipo" v-bind:items="selectOptions.objetoTipos" v-bind:rules="[NotBlank]" label="Tipo" hide-details required>
                 </v-select>
               </v-flex>
               <v-flex xs8>
-                <v-text-field v-model="objetoCodigo" v-bind:rules="[ruleRequired]" label="Código" hide-details required>
+                <v-text-field v-model="objetoCodigo" v-bind:rules="[NotBlank]" label="Código" hide-details required>
                 </v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-textarea v-model="objetoDescricao" v-bind:rules="[ruleRequired]" label="Descrição" auto-grow rows="1" hide-details required>
+                <v-textarea v-model="objetoDescricao" v-bind:rules="[NotBlank]" label="Descrição" auto-grow rows="1" hide-details required>
                 </v-textarea>
               </v-flex>
             </v-layout>
@@ -58,11 +58,11 @@
             <v-subheader>Requerente</v-subheader>
             <v-layout row wrap class="px-4">
               <v-flex xs4>
-                <v-select v-model="requerenteIsPessoaFisica" v-bind:items="selectOptions.requerenteTipos" v-bind:rules="[ruleRequired]"
+                <v-select v-model="requerenteIsPessoaFisica" v-bind:items="selectOptions.requerenteTipos" v-bind:rules="[NotBlank]"
                 label="Tipo" hide-details required></v-select>
               </v-flex>
               <v-flex xs8>
-                <v-text-field v-model="requerenteNome" v-bind:rules="[ruleRequired]" label="Nome" hide-details required></v-text-field>
+                <v-text-field v-model="requerenteNome" v-bind:rules="[NotBlank]" label="Nome" hide-details required></v-text-field>
               </v-flex>
             </v-layout>
 
@@ -85,6 +85,8 @@ import { mapFields } from 'vuex-map-fields'
 import { VIEW_PROCESSO_NEW, PROCESSO } from 'store/namespaces'
 import { CHANGE_ANO, CHANGE_NOME, CHANGE_NUMERO, SAVE, START, TOGGLE_NOME_LOCKING } from 'store/action.types'
 
+import { NotBlank } from 'services/form.rules'
+
 import BaseIconButton from 'components/BaseIconButton'
 
 export default {
@@ -94,6 +96,8 @@ export default {
   },
   data () {
     return {
+      NotBlank,
+
       isFormValid: false,
       isNotifying: false
     }
@@ -118,11 +122,11 @@ export default {
       set (value) { this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${CHANGE_NUMERO}`, value) }
     },
     ano: {
-      get () {  return this.$store.getters[`${VIEW_PROCESSO_NEW}/processoField`]('ano') },
+      get () { return this.$store.getters[`${VIEW_PROCESSO_NEW}/processoField`]('ano') },
       set (value) { this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${CHANGE_ANO}`, value) }
     },
     nome: {
-      get () {  return this.$store.getters[`${VIEW_PROCESSO_NEW}/processoField`]('nome') },
+      get () { return this.$store.getters[`${VIEW_PROCESSO_NEW}/processoField`]('nome') },
       set (value) { this.$store.dispatch(`${VIEW_PROCESSO_NEW}/${CHANGE_NOME}`, value) }
     },
     isSavable () {
@@ -133,9 +137,6 @@ export default {
     },
     nomeEditModeButtonTooltip () {
       return (this.isNomeLocked) ? 'manual' : 'automatico'
-    },
-    ruleRequired () {
-      return v => v != null || ''
     }
   },
   methods: {

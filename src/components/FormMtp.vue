@@ -1,64 +1,73 @@
 <template>
-  <v-container grid-list-lg fluid class="py-4">
+  <v-form v-model="isFormValid">
+    <v-container grid-list-lg fluid class="py-4">
 
-    <v-divider></v-divider>
-    <v-subheader>irregularidades</v-subheader>
-    <v-layout row wrap class="pl-5">
-      <v-flex v-for="(irregularidade, index) in irregularidades" v-bind:key="index" xs8>
-        <v-text-field
-          v-model="irregularidade.text"
-          v-on:click:append="removeIrregularidade(index)"
-          v-bind:append-icon="(irregularidades.length > 1) ? 'cancel' : null"
-          label="Descrição da irregularidade" hide-details box
-        ></v-text-field>
-      </v-flex>
-      <base-icon-button v-on:click="addIrregularidade" slot="activator" tooltip="Adicionar" color="indigo" class="mt-2" top fab dark>add</base-icon-button>
-    </v-layout>
-
-    <template v-if="showRequisitos">
-      <v-divider class="mt-4"></v-divider>
-      <v-subheader>Requisitos de Admissibilidade</v-subheader>
-      <v-layout column class="pl-5">
-        <v-checkbox v-for="admissibilidade in selectOptions.admissibilidade"
-          v-model="requisitosPresentes"
-          v-bind:label="admissibilidade.text"
-          v-bind:value="admissibilidade.value"
-          v-bind:key="admissibilidade.value"
-          color="blue darken-2" hide-details></v-checkbox>
-      </v-layout>
-    </template>
-
-    <template v-if="showCautelar">
-      <v-divider class="mt-4"></v-divider>
-      <v-subheader>Pressupostos Cautelares</v-subheader>
+      <v-divider></v-divider>
+      <v-subheader>irregularidades</v-subheader>
       <v-layout row wrap class="pl-5">
-        <v-flex xs3>
-          <v-checkbox v-model="presenteFumus" label="fumus boni iuris" class="italic-label" color="blue darken-2" hide-details></v-checkbox>
+        <v-flex v-for="(irregularidade, index) in irregularidades" v-bind:key="index" xs8>
+          <v-text-field
+            v-model="irregularidade.text" v-bind:rules="[NotBlank]"
+            v-on:click:append="removeIrregularidade(index)"
+            v-bind:append-icon="(irregularidades.length > 1) ? 'cancel' : null"
+            label="Descrição da irregularidade" hide-details box>
+          </v-text-field>
         </v-flex>
-        <v-flex xs4>
-          <v-select v-model="presentePericulum" v-bind:items="selectOptions.periculum" label="periculum in mora" class="italic-label" hide-details box>
-          </v-select>
+        <base-icon-button v-on:click="addIrregularidade" slot="activator" tooltip="Adicionar" color="indigo" class="mt-2" top fab dark>add</base-icon-button>
+      </v-layout>
+
+      <template v-if="showAdmissibilidade">
+        <v-divider class="mt-4"></v-divider>
+        <v-subheader>Requisitos de Admissibilidade</v-subheader>
+        <v-layout column class="pl-5">
+          <v-checkbox v-for="admissibilidade in selectOptions.admissibilidade"
+            v-model="requisitosPresentes"
+            v-bind:label="admissibilidade.text"
+            v-bind:value="admissibilidade.value"
+            v-bind:key="admissibilidade.value"
+            color="blue darken-2" hide-details>
+          </v-checkbox>
+        </v-layout>
+      </template>
+
+      <template v-if="showCautelar">
+        <v-divider class="mt-4"></v-divider>
+        <v-subheader>Pressupostos Cautelares</v-subheader>
+        <v-layout row wrap class="pl-5">
+          <v-flex xs3>
+            <v-checkbox v-model="presenteFumus" label="fumus boni iuris" class="italic-label" color="blue darken-2" hide-details></v-checkbox>
+          </v-flex>
+          <v-flex xs4>
+            <v-select v-model="presentePericulum" v-bind:rules="[NotBlank]"
+              v-bind:items="selectOptions.periculum"
+              label="periculum in mora" class="italic-label" hide-details box>
+            </v-select>
+          </v-flex>
+        </v-layout>
+      </template>
+
+      <v-divider class="mt-4"></v-divider>
+      <v-subheader>Auditores</v-subheader>
+      <v-layout row wrap class="pl-5">
+        <v-flex xs12>
+          <v-autocomplete
+            v-model="auditores" v-bind:rules="[NotEmpty]"
+            v-bind:items="selectOptions.auditores" multiple
+            label="Nomes" no-data-text="Auditor não encontrado" hide-details box>
+          </v-autocomplete>
         </v-flex>
       </v-layout>
-    </template>
 
-    <v-divider class="mt-4"></v-divider>
-    <v-subheader>Auditores</v-subheader>
-    <v-layout row wrap class="pl-5">
-      <v-flex xs12>
-        <v-combobox v-model="auditores" v-bind:items="selectOptions.auditores" multiple  label="Nomes" hide-selected small-chips hide-details box></v-combobox>
-      </v-flex>
-    </v-layout>
+      <v-divider inset class="my-4"></v-divider>
+      <v-layout justify-end row wrap class="pl-5">
+        <v-btn v-on:click="createDoc" v-bind:disabled="!isBakeable" v-bind:loading="isLoading">GERAR DOC</v-btn>
+        <v-btn v-on:click="saveData" v-bind:disabled="isLoading" v-bind:loading="isLoading">SALVAR</v-btn>
+      </v-layout>
 
-    <v-divider inset class="my-4"></v-divider>
-    <v-layout justify-end row wrap class="pl-5">
-      <v-btn v-on:click="createDoc" v-bind:disabled="isLoading" v-bind:loading="isLoading">GERAR DOC</v-btn>
-      <v-btn v-on:click="saveData" v-bind:disabled="isLoading" v-bind:loading="isLoading">SALVAR</v-btn>
-    </v-layout>
+      <v-snackbar v-model="isNotifying" v-bind:timeout="3000" bottom>{{ noteMessage }}</v-snackbar>
 
-    <v-snackbar v-model="isNotifying" v-bind:timeout="3000" bottom>{{ noteMessage }}</v-snackbar>
-
-  </v-container>
+    </v-container>
+  </v-form>
 </template>
 
 <script>
@@ -69,6 +78,8 @@ import { FORM_MTP, MTP } from 'store/namespaces'
 import { SAVE, START } from 'store/action.types'
 import { PUSH_IRREGULARIDADE, REMOVE_IRREGULARIDADE } from 'store/mutation.types'
 
+import { NotBlank, NotEmpty } from 'services/form.rules'
+
 import BaseIconButton from 'components/BaseIconButton'
 
 export default {
@@ -78,6 +89,10 @@ export default {
   },
   data () {
     return {
+      NotBlank,
+      NotEmpty,
+
+      isFormValid: false,
       isNotifying: false,
       noteMessage: null
     }
@@ -89,7 +104,7 @@ export default {
       'cautelar.presentePericulum',
       'admissibilidade.requisitosPresentes'
     ]),
-    ...mapGetters(`${FORM_MTP}`, [
+    ...mapGetters(FORM_MTP, [
       'paramId',
       'form',
       'isLoading',
@@ -100,6 +115,9 @@ export default {
     ]),
     bakingLink () {
       return `${process.env['DOCBAKER_API_URL']}/bakery/bake?template=MTP&processo=${this.paramId}`
+    },
+    isBakeable () {
+      return !this.isLoading && this.isFormValid
     },
     selectOptions () {
       var options = this.$store.getters[`${FORM_MTP}/selectOptions`]
@@ -113,7 +131,7 @@ export default {
         periculum: options.periculum
       }
     },
-    showRequisitos () {
+    showAdmissibilidade () {
       return ['f-mtp-1', 'f-mtp-3'].includes(this.form)
     },
     showCautelar () {
@@ -141,7 +159,7 @@ export default {
       }).finally(() => {
         this.isNotifying = true
       })
-    },
+    }
   },
   created () {
     this.$store.dispatch(`${FORM_MTP}/${START}`)

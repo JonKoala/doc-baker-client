@@ -6,14 +6,14 @@ import { START } from 'store/action.types'
 
 function getInitialState () {
   return {
-    auditores: [], // Objects { text: String, value: String }
+    auditores: [], // Strings
     irregularidades: [{ text: null }],
     admissibilidade: {
       requisitosPresentes: [] // Strings
     },
     cautelar: {
       presenteFumus: false,
-      presentePericulum: 'NÃO'
+      presentePericulum: null
     }
   }
 }
@@ -48,7 +48,7 @@ const actions = {
 
   [START] ({ commit }, mtp) {
     if (mtp) {
-      commit(UPDATE_FIELD, { path: 'auditores', value: mtp.auditores.map(a => { return { text: a.nome, value: a._id } }) })
+      commit(UPDATE_FIELD, { path: 'auditores', value: mtp.auditores.map(a => a._id) })
       commit(UPDATE_FIELD, { path: 'irregularidades', value: mtp.irregularidades.map(i => { return { text: i } }) })
       if (mtp.admissibilidade)
         commit(UPDATE_FIELD, { path: 'admissibilidade.requisitosPresentes', value: mtp.admissibilidade.requisitosPresentes.map(r => r._id) })
