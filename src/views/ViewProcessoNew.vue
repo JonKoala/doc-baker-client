@@ -58,8 +58,7 @@
             <v-subheader>Requerente</v-subheader>
             <v-layout row wrap class="px-4">
               <v-flex xs4>
-                <v-select v-model="requerenteIsPessoaFisica" v-bind:items="selectOptions.requerenteTipos" v-bind:rules="[NotBlank]"
-                label="Tipo" hide-details required></v-select>
+                <v-select v-model="requerenteIsPessoaFisica" v-bind:items="selectOptions.requerenteTipos" label="Tipo" hide-details required></v-select>
               </v-flex>
               <v-flex xs8>
                 <v-text-field v-model="requerenteNome" v-bind:rules="[NotBlank]" label="Nome" hide-details required></v-text-field>
