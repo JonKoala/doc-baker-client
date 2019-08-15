@@ -1,21 +1,19 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
 import { sync } from 'vuex-router-sync'
-
-import 'vuetify/src/stylus/app.styl'
 
 import App from './App'
 import router from './router'
 import store from 'store'
+import vuetify from './vuetify'
 
 
-Vue.use(Vuetify)
 sync(store, router)
 
 new Vue({
   el: '#app',
   router,
   store,
+  vuetify,
   template: '<App/>',
   components: { App }
 })

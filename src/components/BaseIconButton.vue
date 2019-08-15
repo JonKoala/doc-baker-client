@@ -1,9 +1,11 @@
 <template>
   <v-tooltip v-bind="{top, right, bottom, left}" v-bind:disabled="!hasTooltip">
-    <v-btn v-on="$listeners" v-bind="{dark, disabled, fab, flat, href, large, small, target, to}" v-bind:color="btnColor" v-bind:icon="!fab"
-    slot="activator" class="ma-0">
-      <v-icon v-bind="{dark}" v-bind:color="iconColor"><slot></slot></v-icon>
-    </v-btn>
+    <template v-slot:activator="{ on }">
+      <v-btn v-on="$listeners" v-bind="{dark, disabled, fab, text, href, large, small, target, to}" v-bind:color="btnColor" v-bind:icon="!fab"
+      slot="activator" class="ma-0">
+        <v-icon v-bind="{dark}" v-bind:color="iconColor"><slot></slot></v-icon>
+      </v-btn>
+    </template>
     <span>{{ tooltip }}</span>
   </v-tooltip>
 </template>
@@ -16,7 +18,7 @@ export default {
     dark: { type: Boolean },
     disabled: { type: Boolean },
     fab: { type: Boolean },
-    flat: { type: Boolean },
+    text: { type: Boolean },
     large: { type: Boolean },
     small: { type: Boolean },
     tooltip: { type: String },

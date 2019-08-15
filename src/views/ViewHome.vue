@@ -3,16 +3,16 @@
     <v-layout justify-center>
       <v-flex xs8>
         <v-card color="white">
-          <v-toolbar color="blue-grey" dense card>
+          <v-app-bar color="blue-grey" dense flat>
             <v-toolbar-title class="white--text">PROCESSOS</v-toolbar-title>
-          </v-toolbar>
+          </v-app-bar>
           <v-progress-linear v-show="isLoading" class="my-0" color="blue" indeterminate></v-progress-linear>
           <v-layout v-if="showResults" row justify-end class="pt-3 pb-5 pr-4">
             <v-flex xs4>
               <v-text-field v-model="search" append-icon="search" label="Busca" single-line hide-details></v-text-field>
             </v-flex>
           </v-layout>
-          <v-data-table v-if="showResults" v-bind="{ headers, items, search }" hide-actions>
+          <v-data-table v-if="showResults" v-bind="{ headers, items, search }" hide-default-footer>
             <template slot="items" slot-scope="props">
               <tr v-on:click="showDetails(props.item)">
                 <td>{{ props.item.nome }}</td>
@@ -28,11 +28,11 @@
     </v-layout>
     <v-dialog v-model="dialog" width="30vw" scrollable>
       <v-card>
-        <v-toolbar color="blue darken-2" dense card>
+        <v-app-bar color="blue darken-2" dense flat>
           <v-toolbar-title class="white--text">WORKFLOW</v-toolbar-title>
           <v-spacer></v-spacer>
           <base-icon-button v-bind:to="linkToEdit" color="white" tooltip="editar" top>edit</base-icon-button>
-        </v-toolbar>
+        </v-app-bar>
         <v-card-text ref="dialogContent" style="height:300px">
           <workflow-viewer v-if="processo.workflow.length > 0" v-bind:value="processo.workflow" class="pb-1"></workflow-viewer>
         </v-card-text>

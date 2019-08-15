@@ -16,13 +16,20 @@ module.exports = {
         use: ['vue-style-loader', 'css-loader']
       },
       {
+        test: /\.s(c|a)ss$/,
+        use: ['vue-style-loader', 'css-loader', {
+          loader: 'sass-loader',
+          options: {
+            implementation: require('sass'),
+            fiber: require('fibers'),
+            indentedSyntax: true
+          }
+        }]
+      },
+      {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/
-      },
-      {
-        test: /\.styl$/,
-        loader: ['style-loader', 'css-loader', 'stylus-loader']
       },
       {
         test: /\.vue$/,

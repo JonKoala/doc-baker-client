@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 
 import ViewHome from 'views/ViewHome'
 import ViewProcessoEdit from 'views/ViewProcessoEdit'
-import ViewProcessoNew from 'views/ViewProcessoNew.vue'
+import ViewProcessoNew from 'views/ViewProcessoNew'
 
 
 Vue.use(VueRouter)
