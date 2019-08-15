@@ -12,19 +12,8 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: ['vue-style-loader', 'css-loader']
-      },
-      {
-        test: /\.s(c|a)ss$/,
-        use: ['vue-style-loader', 'css-loader', {
-          loader: 'sass-loader',
-          options: {
-            implementation: require('sass'),
-            fiber: require('fibers'),
-            indentedSyntax: true
-          }
-        }]
+        test: /\.(c|sc|sa)ss$/,
+        use: ['vue-style-loader', 'css-loader', 'sass-loader']
       },
       {
         test: /\.js$/,
