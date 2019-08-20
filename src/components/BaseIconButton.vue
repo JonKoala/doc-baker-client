@@ -1,13 +1,15 @@
 <template>
-  <v-tooltip v-bind="{top, right, bottom, left}" v-bind:disabled="!hasTooltip">
-    <template v-slot:activator="{ on }">
-      <v-btn v-on="$listeners" v-bind="{dark, disabled, fab, text, href, large, small, target, to}" v-bind:color="btnColor" v-bind:icon="!fab"
-      slot="activator" class="ma-0">
-        <v-icon v-bind="{dark}" v-bind:color="iconColor"><slot></slot></v-icon>
-      </v-btn>
-    </template>
-    <span>{{ tooltip }}</span>
-  </v-tooltip>
+  <div>
+    <v-tooltip v-bind="{ top, right, bottom, left }" v-bind:disabled="!hasTooltip">
+      <template v-slot:activator="{ on }">
+        <v-btn v-on="{ ...$listeners, ...on }" v-bind="{ dark, disabled, fab, href, large, small, target, text, to }"
+          v-bind:color="btnColor" v-bind:icon="!fab">
+          <v-icon v-bind="{ dark }" v-bind:color="iconColor"><slot></slot></v-icon>
+        </v-btn>
+      </template>
+      <span>{{ tooltip }}</span>
+    </v-tooltip>
+  </div>
 </template>
 
 <script>
@@ -18,9 +20,9 @@ export default {
     dark: { type: Boolean },
     disabled: { type: Boolean },
     fab: { type: Boolean },
-    text: { type: Boolean },
     large: { type: Boolean },
     small: { type: Boolean },
+    text: { type: Boolean },
     tooltip: { type: String },
 
     // Link

@@ -1,43 +1,50 @@
 <template>
   <v-container fluid>
-    <v-layout justify-center>
-      <v-flex xs8>
-        <v-card color="white">
-          <v-app-bar color="blue-grey" dense flat>
-            <v-toolbar-title class="white--text">PROCESSOS</v-toolbar-title>
-          </v-app-bar>
-          <v-progress-linear v-show="isLoading" class="my-0" color="blue" indeterminate></v-progress-linear>
-          <v-layout v-if="showResults" row justify-end class="pt-3 pb-5 pr-4">
-            <v-flex xs4>
+
+    <v-row justify="center" align="center" dense>
+      <v-col cols="8">
+        <v-card>
+
+          <v-toolbar color="blue-grey" class="white--text" dense flat>
+            <v-toolbar-title>PROCESSOS</v-toolbar-title>
+          </v-toolbar>
+
+          <v-progress-linear v-bind:active="isLoading" height="6" color="blue" indeterminate></v-progress-linear>
+          <v-row justify="end" align="end" dense class="my-3 mr-1">
+            <v-col cols="4">
               <v-text-field v-model="search" append-icon="search" label="Busca" single-line hide-details></v-text-field>
-            </v-flex>
-          </v-layout>
-          <v-data-table v-if="showResults" v-bind="{ headers, items, search }" hide-default-footer>
-            <template slot="items" slot-scope="props">
-              <tr v-on:click="showDetails(props.item)">
-                <td>{{ props.item.nome }}</td>
-                <td>{{ props.item.numero }}</td>
-                <td>{{ props.item.ano }}</td>
-              </tr>
+            </v-col>
+          </v-row>
+
+          <v-data-table id="processos-table" v-bind="{ headers, items, search }" v-on:click:row="showDetails" hide-default-footer>
+            <template v-slot:no-data>
+              <v-alert class="my-0" v-bind="{ ...tableAlert }" tile>{{ tableAlert.message }}</v-alert>
+            </template>
+            <template v-slot:no-results>
+              <v-alert class="my-0" v-bind="{ ...tableAlert }" tile>{{ tableAlert.message }}</v-alert>
             </template>
           </v-data-table>
-          <v-alert v-model="isEmpty" class="my-0" color="warning" icon="priority_high">Nenhum processo encontrado</v-alert>
-          <v-alert v-model="isError" class="my-0" color="error" icon="warning">Erro na busca dos processos</v-alert>
+
         </v-card>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
+
     <v-dialog v-model="dialog" width="30vw" scrollable>
       <v-card>
-        <v-app-bar color="blue darken-2" dense flat>
-          <v-toolbar-title class="white--text">WORKFLOW</v-toolbar-title>
+        
+        <v-toolbar color="blue darken-2" class="white--text" dense flat>
+          <v-toolbar-title>WORKFLOW</v-toolbar-title>
           <v-spacer></v-spacer>
           <base-icon-button v-bind:to="linkToEdit" color="white" tooltip="editar" top>edit</base-icon-button>
-        </v-app-bar>
+        </v-toolbar>
+
         <v-card-text ref="dialogContent" style="height:300px">
-          <workflow-viewer v-if="processo.workflow.length > 0" v-bind:value="processo.workflow" class="pb-1"></workflow-viewer>
+          <workflow-viewer v-if="processo.workflow.length > 0" v-bind:value="processo.workflow"></workflow-viewer>
         </v-card-text>
+
       </v-card>
     </v-dialog>
+
   </v-container>
 </template>
 
@@ -76,19 +83,20 @@ export default {
     },
     headers () {
       return [
-        {text: 'NOME', value: 'nome'},
-        {text: 'NÚMERO', value: 'numero'},
-        {text: 'ANO', value: 'ano'}
+        { text: 'NOME', value: 'nome' },
+        { text: 'NÚMERO', value: 'numero' },
+        { text: 'ANO', value: 'ano' }
       ]
-    },
-    isEmpty () {
-      return !this.isLoading && !this.isError && this.items.length === 0
     },
     linkToEdit () {
       return `processo/${this.processo.id}`
     },
-    showResults () {
-      return !this.isLoading && !this.isError && !this.isEmpty
+    tableAlert () {
+      if (this.isLoading)
+        return { type: 'info', icon: 'search', message: 'Buscando processos...' }
+      else if (this.isError)
+        return { type: 'error', icon: 'error', message: 'Erro na busca dos processos' }
+      return { type: 'warning', icon: 'info', message: 'Nenhum processo encontrado' }
     }
   },
   methods: {
@@ -110,3 +118,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+  #processos-table >>> .v-data-table__empty-wrapper td {
+    padding: 0px !important
+  }
+
+</style>
