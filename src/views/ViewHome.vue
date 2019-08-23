@@ -8,8 +8,8 @@
           <v-toolbar color="blue-grey" class="white--text" dense flat>
             <v-toolbar-title>PROCESSOS</v-toolbar-title>
           </v-toolbar>
-
           <v-progress-linear v-bind:active="isLoading" height="6" color="blue" indeterminate></v-progress-linear>
+
           <v-row justify="end" align="end" dense class="my-3 mr-1">
             <v-col cols="4">
               <v-text-field v-model="search" append-icon="search" label="Busca" single-line hide-details></v-text-field>
@@ -31,7 +31,7 @@
 
     <v-dialog v-model="dialog" width="30vw" scrollable>
       <v-card>
-        
+
         <v-toolbar color="blue darken-2" class="white--text" dense flat>
           <v-toolbar-title>WORKFLOW</v-toolbar-title>
           <v-spacer></v-spacer>

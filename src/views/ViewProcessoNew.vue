@@ -1,79 +1,79 @@
 <template>
   <v-form v-model="isFormValid">
-    <v-container grid-list-lg fluid class="pa-4">
-      <v-layout justify-center>
-        <v-flex xs5>
+    <v-container fluid>
+
+      <v-row justify="center" align="center" dense>
+        <v-col cols="6">
           <v-card>
-            <v-toolbar color="blue-grey" dense card>
-              <v-toolbar-title class="white--text">NOVO PROCESSO</v-toolbar-title>
+
+            <v-toolbar color="blue-grey" class="white--text" dense flat>
+              <v-toolbar-title>NOVO PROCESSO</v-toolbar-title>
             </v-toolbar>
-            <v-progress-linear v-bind:active="isLoading" class="my-0" color="blue" indeterminate></v-progress-linear>
+            <v-progress-linear v-bind:active="isLoading" height="6" color="blue" indeterminate></v-progress-linear>
 
             <!-- Dados gerais -->
-            <v-layout row wrap class="px-4">
-              <v-flex xs6>
-                <v-text-field v-model="numero" v-bind:disabled="isLoading" v-bind:rules="[NotBlank]" label="Número" hide-details required></v-text-field>
-              </v-flex>
-              <v-flex xs2>
-                <v-text-field v-model="ano" v-bind:disabled="isLoading" v-bind:rules="[NotBlank]" label="Ano" hide-details required></v-text-field>
-              </v-flex>
-              <v-flex xs8>
-                <v-text-field v-model="nome" v-bind:disabled="isNomeLocked || isLoading" v-bind:rules="[NotBlank]" label="Nome" hide-details required>
-                </v-text-field>
-              </v-flex>
-              <v-flex class="pt-3" xs1>
-                <base-icon-button v-on:click="toggleNomeEditMode" v-bind:disabled="isLoading" v-bind:tooltip="nomeEditModeButtonTooltip" top>
+            <v-row class="mx-2">
+              <v-col cols="6">
+                <v-text-field v-model="numero" v-bind:disabled="isLoading" v-bind:rules="[NotBlank]" label="Número" hide-details></v-text-field>
+              </v-col>
+              <v-col cols="2">
+                <v-text-field v-model="ano" v-bind:disabled="isLoading" v-bind:rules="[NotBlank]" label="Ano" hide-details></v-text-field>
+              </v-col>
+              <v-col cols="8">
+                <v-text-field v-model="nome" v-bind:disabled="isNomeLocked || isLoading" v-bind:rules="[NotBlank]" label="Nome" hide-details></v-text-field>
+              </v-col>
+              <v-col class="pa-0" cols="1">
+                <base-icon-button class="mt-8" v-on:click="toggleNomeEditMode" v-bind:disabled="isLoading" v-bind:tooltip="nomeEditModeButtonTooltip" top>
                   {{ nomeEditModeButtonIcon }}
                 </base-icon-button>
-              </v-flex>
-              <v-flex xs4>
-                <v-select v-model="tipo" v-bind:items="selectOptions.processoTipos" v-bind:rules="[NotBlank]" label="Tipo" hide-details required></v-select>
-              </v-flex>
-              <v-flex xs8>
-                <v-text-field v-model="jurisdicionado" v-bind:disabled="isLoading" v-bind:rules="[NotBlank]" label="Jurisdicionado" hide-details required>
-                </v-text-field>
-              </v-flex>
-            </v-layout>
+              </v-col>
+              <v-col cols="4">
+                <v-select v-model="tipo" v-bind:items="selectOptions.processoTipos" v-bind:rules="[NotBlank]" label="Tipo" hide-details></v-select>
+              </v-col>
+              <v-col cols="8">
+                <v-text-field v-model="jurisdicionado" v-bind:disabled="isLoading" v-bind:rules="[NotBlank]" label="Jurisdicionado" hide-details></v-text-field>
+              </v-col>
+            </v-row>
 
             <!-- Dados do objeto -->
             <v-divider class="mt-4"></v-divider>
             <v-subheader>Objeto</v-subheader>
-            <v-layout row wrap class="px-4">
-              <v-flex xs4>
-                <v-select v-model="objetoTipo" v-bind:items="selectOptions.objetoTipos" v-bind:rules="[NotBlank]" label="Tipo" hide-details required>
-                </v-select>
-              </v-flex>
-              <v-flex xs8>
-                <v-text-field v-model="objetoCodigo" v-bind:rules="[NotBlank]" label="Código" hide-details required>
-                </v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-textarea v-model="objetoDescricao" v-bind:rules="[NotBlank]" label="Descrição" auto-grow rows="1" hide-details required>
-                </v-textarea>
-              </v-flex>
-            </v-layout>
+            <v-row class="mx-2">
+              <v-col cols="4">
+                <v-select v-model="objetoTipo" v-bind:items="selectOptions.objetoTipos" v-bind:rules="[NotBlank]" label="Tipo" hide-details></v-select>
+              </v-col>
+              <v-col cols="8">
+                <v-text-field v-model="objetoCodigo" v-bind:rules="[NotBlank]" label="Código" hide-details></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-textarea v-model="objetoDescricao" v-bind:rules="[NotBlank]" label="Descrição" auto-grow rows="1" hide-details></v-textarea>
+              </v-col>
+            </v-row>
 
             <!-- Dados do requerente -->
             <v-divider class="mt-4"></v-divider>
             <v-subheader>Requerente</v-subheader>
-            <v-layout row wrap class="px-4">
-              <v-flex xs4>
-                <v-select v-model="requerenteIsPessoaFisica" v-bind:items="selectOptions.requerenteTipos" label="Tipo" hide-details required></v-select>
-              </v-flex>
-              <v-flex xs8>
-                <v-text-field v-model="requerenteNome" v-bind:rules="[NotBlank]" label="Nome" hide-details required></v-text-field>
-              </v-flex>
-            </v-layout>
+            <v-row class="mx-2">
+              <v-col cols="4">
+                <v-select v-model="requerenteIsPessoaFisica" v-bind:items="selectOptions.requerenteTipos" label="Tipo" hide-details></v-select>
+              </v-col>
+              <v-col cols="8">
+                <v-text-field v-model="requerenteNome" v-bind:rules="[NotBlank]" label="Nome" hide-details></v-text-field>
+              </v-col>
+            </v-row>
 
-            <v-layout row wrap justify-end class="pr-4 pt-4 pb-2">
-              <v-btn v-bind:disabled="!isSavable" v-on:click="saveProcesso" large class="mt-1">Salvar</v-btn>
-            </v-layout>
+            <v-row justify="end" class="mx-2 pt-4 pb-2">
+              <v-btn v-bind:disabled="!isSavable" v-on:click="saveProcesso" class="mr-2" large>Salvar</v-btn>
+            </v-row>
 
           </v-card>
-        </v-flex>
-      </v-layout>
-      <v-snackbar v-model="isNotifying" v-bind:timeout="5000" bottom right>Ocorreu um erro ao tentar salvar o processo</v-snackbar>
+        </v-col>
+      </v-row>
+
     </v-container>
+
+    <v-snackbar v-model="isNotifying" bottom right>Ocorreu um erro ao tentar salvar o processo...</v-snackbar>
+
   </v-form>
 </template>
 
