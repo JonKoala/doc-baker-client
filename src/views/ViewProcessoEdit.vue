@@ -1,27 +1,36 @@
 <template>
-  <v-container fluid fill-height grid-list-md>
-    <v-layout v-if="workflow.length > 0">
-      <v-flex>
+  <v-container fluid class="d-flex" style="height: 100%">
+    <v-row dense>
+
+      <v-col>
         <v-card ref="workflowContainer" class="scrollable-container">
           <div class="scrollable-content pb-3">
-            <workflow-viewer v-bind:value="workflow"></workflow-viewer>
-            <v-layout justify-space-between class="px-3">
-              <div>
-                <v-btn v-for="option in options.map(o => o.text)" v-bind:key="option" v-on:click="takeAction(option)" >{{ option }}</v-btn>
-              </div>
+
+            <v-row>
+              <workflow-viewer v-if="workflow.length > 0" v-bind:value="workflow"></workflow-viewer>
+            </v-row>
+
+            <v-row justify="start" class="mx-3" dense>
+              <template v-if="options">
+                <v-btn v-for="option in options.map(o => o.text)" v-bind:key="option" v-on:click="takeAction(option)" class="mr-5">{{ option }}</v-btn>
+              </template>
+              <v-spacer></v-spacer>
               <v-btn v-if="workflow.length > 1" v-on:click="undoAction" >voltar</v-btn>
-            </v-layout>
+            </v-row>
+
           </div>
         </v-card>
-      </v-flex>
-      <v-flex v-on:webkitTransitionEnd="scrollToBottom" v-on:transitionend="scrollToBottom" class="form" v-bind:class="{ 'showing': showingForm }">
+      </v-col>
+
+      <v-col v-on:webkitTransitionEnd="scrollToBottom" v-on:transitionend="scrollToBottom" class="form" v-bind:class="{ 'showing': showingForm }">
         <v-card class="scrollable-container">
           <div class="scrollable-content">
             <component v-bind:is="formToShow" ></component>
           </div>
         </v-card>
-      </v-flex>
-    </v-layout>
+      </v-col>
+
+    </v-row>
   </v-container>
 </template>
 
