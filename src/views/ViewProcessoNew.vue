@@ -1,7 +1,7 @@
 <template>
   <v-form v-model="isFormValid">
-    <v-container fluid>
 
+    <v-container fluid>
       <v-row justify="center" align="center" dense>
         <v-col cols="6">
           <v-card>
@@ -69,7 +69,6 @@
           </v-card>
         </v-col>
       </v-row>
-
     </v-container>
 
     <v-snackbar v-model="isNotifying" bottom right>Ocorreu um erro ao tentar salvar o processo...</v-snackbar>

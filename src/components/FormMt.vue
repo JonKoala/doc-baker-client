@@ -6,7 +6,7 @@
     <v-subheader>Dados do Processo</v-subheader>
     <v-layout row wrap class="pl-5">
       <v-flex xs5>
-        <v-text-field hint="Trata-se de representação proposta por <b>[REPRESENTANTE]</b> ..." label="Representante" box></v-text-field>
+        <v-text-field hint="Trata-se de representação proposta por <b>[REPRESENTANTE]</b> ..." label="Representante" filled></v-text-field>
       </v-flex>
     </v-layout>
 
@@ -19,10 +19,10 @@
           <v-subheader>{{ index+1 }}ª Irregularidade</v-subheader>
         </div>
         <v-layout row wrap class="pl-5">
-          <v-flex xs7><v-text-field label="Título" box></v-text-field></v-flex>
+          <v-flex xs7><v-text-field label="Título" filled></v-text-field></v-flex>
           <base-icon-button v-on:click="removeIrregularidade(index)" slot="activator"
           tooltip="Remover Irregularidade" color="red" class="ma-2 mt-1" top fab dark small>remove</base-icon-button>
-          <v-flex xs12><v-textarea label="Base Legal" box auto-grow rows="1"></v-textarea></v-flex>
+          <v-flex xs12><v-textarea label="Base Legal" filled auto-grow rows="1"></v-textarea></v-flex>
 
           <!-- reponsaveis -->
           <v-expansion-panel expand class="elevation-0">
@@ -32,13 +32,13 @@
                 <v-subheader>{{ responsavelIndex+1 }}° Responsável</v-subheader>
               </div>
               <v-layout row wrap class="pl-5">
-                <v-flex xs7><v-text-field label="Responsável" box></v-text-field></v-flex>
+                <v-flex xs7><v-text-field label="Responsável" filled></v-text-field></v-flex>
                 <base-icon-button v-on:click="removeResponsavel(index, responsavelIndex)" slot="activator"
                 tooltip="Remover Responsável" color="red" class="ma-2" top fab dark small>remove</base-icon-button>
 
-                <v-flex xs12><v-textarea label="Conduta" box auto-grow rows="1"></v-textarea></v-flex>
-                <v-flex xs12><v-textarea label="Nexo" box auto-grow rows="1"></v-textarea></v-flex>
-                <v-flex xs12><v-textarea label="Culpabilidade" box auto-grow rows="1"></v-textarea></v-flex>
+                <v-flex xs12><v-textarea label="Conduta" filled auto-grow rows="1"></v-textarea></v-flex>
+                <v-flex xs12><v-textarea label="Nexo" filled auto-grow rows="1"></v-textarea></v-flex>
+                <v-flex xs12><v-textarea label="Culpabilidade" filled auto-grow rows="1"></v-textarea></v-flex>
               </v-layout>
             </v-expansion-panel-content>
           </v-expansion-panel>

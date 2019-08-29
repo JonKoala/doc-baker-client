@@ -1,72 +1,65 @@
 <template>
   <v-form v-model="isFormValid">
-    <v-container grid-list-lg fluid class="py-4">
 
-      <v-divider></v-divider>
-      <v-subheader>irregularidades</v-subheader>
-      <v-layout row wrap class="pl-5">
-        <v-flex v-for="(irregularidade, index) in irregularidades" v-bind:key="index" xs8>
+    <v-container fluid>
+
+      <v-subheader>Irregularidades</v-subheader>
+      <v-row class="ml-0">
+        <v-col v-for="(irregularidade, index) in irregularidades" v-bind:key="index" cols="8">
           <v-text-field
             v-model="irregularidade.text" v-bind:rules="[NotBlank]"
             v-on:click:append="removeIrregularidade(index)"
             v-bind:append-icon="(irregularidades.length > 1) ? 'cancel' : null"
-            label="Descrição da irregularidade" hide-details box>
+            label="Descrição da irregularidade" hide-details filled>
           </v-text-field>
-        </v-flex>
-        <base-icon-button v-on:click="addIrregularidade" slot="activator" tooltip="Adicionar" color="indigo" class="mt-2" top fab dark>add</base-icon-button>
-      </v-layout>
+        </v-col>
+        <base-icon-button v-on:click="addIrregularidade" tooltip="Adicionar" color="indigo" class="mt-2" top fab dark>add</base-icon-button>
+      </v-row>
 
       <template v-if="showAdmissibilidade">
         <v-divider class="mt-4"></v-divider>
         <v-subheader>Requisitos de Admissibilidade</v-subheader>
-        <v-layout column class="pl-5">
-          <v-checkbox v-for="admissibilidade in selectOptions.admissibilidade"
-            v-model="requisitosPresentes"
-            v-bind:label="admissibilidade.text"
-            v-bind:value="admissibilidade.value"
-            v-bind:key="admissibilidade.value"
-            color="blue darken-2" hide-details>
-          </v-checkbox>
-        </v-layout>
+        <v-checkbox v-for="admissibilidade in selectOptions.admissibilidade"
+          v-model="requisitosPresentes"
+          v-bind:label="admissibilidade.text"
+          v-bind:value="admissibilidade.value"
+          v-bind:key="admissibilidade.value"
+          color="blue darken-2" class="pl-4" multiple hide-details>
+        </v-checkbox>
       </template>
 
       <template v-if="showCautelar">
-        <v-divider class="mt-4"></v-divider>
+        <v-divider class="mt-5"></v-divider>
         <v-subheader>Pressupostos Cautelares</v-subheader>
-        <v-layout row wrap class="pl-5">
-          <v-flex xs3>
+        <v-row class="ml-0">
+          <v-col cols="3" class="pl-4">
             <v-checkbox v-model="presenteFumus" label="fumus boni iuris" class="italic-label" color="blue darken-2" hide-details></v-checkbox>
-          </v-flex>
-          <v-flex xs4>
+          </v-col>
+          <v-col cols="3">
             <v-select v-model="presentePericulum" v-bind:rules="[NotBlank]"
               v-bind:items="selectOptions.periculum"
-              label="periculum in mora" class="italic-label" hide-details box>
+              label="periculum in mora" class="italic-label" hide-details filled>
             </v-select>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </template>
 
       <v-divider class="mt-4"></v-divider>
       <v-subheader>Auditores</v-subheader>
-      <v-layout row wrap class="pl-5">
-        <v-flex xs12>
-          <v-autocomplete
-            v-model="auditores" v-bind:rules="[NotEmpty]"
-            v-bind:items="selectOptions.auditores" multiple
-            label="Nomes" no-data-text="Auditor não encontrado" hide-details box>
-          </v-autocomplete>
-        </v-flex>
-      </v-layout>
+      <v-autocomplete v-model="auditores" v-bind:rules="[NotEmpty]"
+        v-bind:items="selectOptions.auditores" multiple
+        label="Nomes" no-data-text="Auditor não encontrado" class="pl-4" hide-details filled>
+      </v-autocomplete>
 
-      <v-divider inset class="my-4"></v-divider>
-      <v-layout justify-end row wrap class="pl-5">
+      <v-row justify="end" class="pt-8 mx-0">
         <v-btn v-on:click="createDoc" v-bind:disabled="!isBakeable" v-bind:loading="isLoading">GERAR DOC</v-btn>
-        <v-btn v-on:click="saveData" v-bind:disabled="isLoading" v-bind:loading="isLoading">SALVAR</v-btn>
-      </v-layout>
-
-      <v-snackbar v-model="isNotifying" v-bind:timeout="3000" bottom>{{ noteMessage }}</v-snackbar>
+        <v-btn v-on:click="saveData" v-bind:disabled="isLoading" v-bind:loading="isLoading" class="mx-5">SALVAR</v-btn>
+      </v-row>
 
     </v-container>
+
+    <v-snackbar v-model="isNotifying" v-bind:timeout="3000" bottom>{{ noteMessage }}</v-snackbar>
+
   </v-form>
 </template>
 
@@ -89,6 +82,7 @@ export default {
   },
   data () {
     return {
+      test: [],
       NotBlank,
       NotEmpty,
 
@@ -153,7 +147,7 @@ export default {
         this.noteMessage = 'Formulário salvo com sucesso!'
         return true
       }).catch(err => {
-        this.noteMessage = 'Ocorreu um erro ao tentar salvar o processo'
+        this.noteMessage = 'Ocorreu um erro ao tentar salvar o processo...'
         console.log(`${err.response.data.type}: ${err.response.data.message}`)
         return false
       }).finally(() => {
